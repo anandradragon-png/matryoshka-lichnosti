@@ -315,3 +315,11 @@ a{color:inherit;text-decoration:none}
   .flow-arrow{transform:rotate(90deg)}
   .flow{flex-direction:column;align-items:center}
 }
+
+/* Заглушка оплаты — всплывающее уведомление */
+.pay-toast{position:fixed;left:50%;bottom:28px;
+  transform:translate(-50%,20px);background:#1F2233;color:#fff;padding:14px 20px;
+  border-radius:14px;max-width:min(90vw,420px);font-size:14px;line-height:1.4;
+  box-shadow:0 12px 40px rgba(31,34,51,.35);opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;z-index:9999;text-align:center}
+.pay-toast.show{opacity:1;transform:translate(-50%,0)}
