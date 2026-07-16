@@ -390,7 +390,7 @@ a{color:inherit;text-decoration:none}
 .am-stat span{font-size:12px;color:#667}
 .am-last{font-size:14px;color:#556;margin:0 0 18px}
 .am-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.am-actions .btn{justify-content:center;width:100%;padding:12px 8px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.am-actions .btn{justify-content:center;width:100%;padding:12px 8px;font-size:14px;text-align:center;line-height:1.25}
 .am-logout{margin-top:18px;width:100%;border:0;background:transparent;color:#C0392B;
   font:inherit;font-weight:600;cursor:pointer;padding:8px}
 .am-logout:hover{text-decoration:underline}
