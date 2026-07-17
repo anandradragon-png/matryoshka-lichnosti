@@ -89,7 +89,7 @@ a{color:inherit;text-decoration:none}
 .svc p{color:var(--muted);font-size:14.5px}
 
 /* How */
-.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:44px}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:44px}
 .how-text h3{font-size:22px;margin-bottom:12px}
 .how-text p{color:var(--muted);margin-bottom:12px}
 .ego-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin:14px 0}
@@ -231,6 +231,15 @@ a{color:inherit;text-decoration:none}
 .pricing{grid-template-columns:repeat(3,1fr)}
 .price-card h3{font-size:20px;margin-bottom:10px}
 
+/* Тесты личности */
+.tests{grid-template-columns:repeat(3,1fr)}
+.test-card{display:flex;flex-direction:column;position:relative}
+.test-icon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:28px;background:var(--purple-l,#F4F2FF);margin-bottom:14px}
+.test-card h3{font-size:19px;margin-bottom:10px}
+.test-card p{color:var(--muted);font-size:14.5px;margin-bottom:16px}
+.test-card .btn{margin-top:auto}
+.test-soon{margin-top:auto;align-self:flex-start;background:var(--purple-l,#F4F2FF);color:var(--purple-d,#6C5CE7);font-weight:700;font-size:13px;padding:8px 14px;border-radius:999px}
+
 /* Value */
 .value{grid-template-columns:repeat(4,1fr)}
 .val b{display:block;font-size:16px;margin-bottom:8px;color:var(--purple-d)}
@@ -333,13 +342,13 @@ a{color:inherit;text-decoration:none}
   .main-nav.open{display:flex;position:absolute;top:72px;left:0;right:0;background:#fff;flex-direction:column;padding:18px 6%;gap:14px;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
   .burger{display:flex;margin-left:auto}
   .hero-grid,.how-grid,.organizer-grid,.phone-wrap,.map-grid,.b2b{grid-template-columns:1fr}
-  .services,.practices,.psy,.pricing,.value{grid-template-columns:1fr 1fr}
+  .services,.practices,.psy,.pricing,.value,.tests,.how-grid{grid-template-columns:1fr 1fr}
   .streak-week{width:100%;margin-left:0;justify-content:space-between}
   .hero-visual{order:-1}
   .phone-wrap{justify-items:center}
 }
 @media(max-width:640px){
-  .services,.practices,.psy,.pricing,.value{grid-template-columns:1fr}
+  .services,.practices,.psy,.pricing,.value,.tests{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr}
   .phone{width:100%}
   .flow-arrow{transform:rotate(90deg)}
