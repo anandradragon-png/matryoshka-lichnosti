@@ -752,7 +752,13 @@ function scrollToPractices(cat) {
   (function seedAccounts() {
     const users = loadUsers();
     let changed = false;
-    const ensure = u => { if (!users.some(x => x.login === u.login)) { users.push(u); changed = true; } };
+    const ensure = u => {
+      const ex = users.find(x => x.login === u.login);
+      if (!ex) { users.push(u); changed = true; return; }
+      // Подстраховка: гарантируем роль администратора у аккаунтов-разработчиков,
+      // даже если аккаунт был создан ранней версией без роли.
+      if (u.role && ex.role !== u.role) { ex.role = u.role; changed = true; }
+    };
     ensure({ name: 'Гость', login: 'demo', pass: 'demo123', created: Date.now() });
     ensure({ name: 'Светлана', login: 'sveta', pass: 'sveta-admin-2026', role: 'admin', created: Date.now() });
     ensure({ name: 'Альбина', login: 'albina', pass: 'albina-admin-2026', role: 'admin', created: Date.now() });
@@ -859,9 +865,9 @@ function scrollToPractices(cat) {
     openModal(`
       <button class="am-close" aria-label="Закрыть">×</button>
       <div class="am-hello">
-        <div class="am-avatar">${(u.name || u.login).slice(0,1).toUpperCase()}</div>
+        <div class="am-avatar">${escapeHtml((u.name || u.login).slice(0,1).toUpperCase())}</div>
         <div>
-          <h3 class="am-title">Здравствуйте, ${u.name || u.login}!</h3>
+          <h3 class="am-title">Здравствуйте, ${escapeHtml(u.name || u.login)}!</h3>
           <p class="am-sub">Ваш личный кабинет Матрёшки</p>
         </div>
       </div>
@@ -951,7 +957,7 @@ function scrollToPractices(cat) {
         <div class="am-avatar admin">🛠</div>
         <div>
           <h3 class="am-title">Панель разработчика</h3>
-          <p class="am-sub">${u.name} · полный доступ</p>
+          <p class="am-sub">${escapeHtml(u.name || u.login)} · полный доступ</p>
         </div>
       </div>
       <div class="adm-note">⚠️ Демо-режим: показаны данные этого браузера. Сквозная статистика по всем пользователям появится после подключения серверной базы (Yandex/Astra Cloud из ТЗ).</div>
@@ -975,8 +981,8 @@ function scrollToPractices(cat) {
         <div class="adm-users">
           ${clientUsers.length ? clientUsers.map(x => `
             <div class="adm-user">
-              <span class="adm-uname">${x.name || x.login} <i class="muted">@${x.login}</i></span>
-              <button class="adm-grant ${x.premium ? 'on' : ''}" data-login="${x.login}">
+              <span class="adm-uname">${escapeHtml(x.name || x.login)} <i class="muted">@${escapeHtml(x.login)}</i></span>
+              <button class="adm-grant ${x.premium ? 'on' : ''}" data-login="${escapeHtml(x.login)}">
                 ${x.premium ? '✓ Premium' : 'Выдать доступ'}
               </button>
             </div>`).join('') : '<span class="muted">Зарегистрированных пользователей пока нет</span>'}
@@ -998,7 +1004,7 @@ function scrollToPractices(cat) {
           ${feedback.length ? feedback.slice().reverse().map(f => `
             <div class="adm-fb">
               <span class="adm-fb-txt">${escapeHtml(f.text)}</span>
-              <time>${new Date(f.date).toLocaleDateString('ru-RU')} · ${f.from || 'аноним'}</time>
+              <time>${new Date(f.date).toLocaleDateString('ru-RU')} · ${escapeHtml(f.from || 'аноним')}</time>
             </div>`).join('') : '<span class="muted">Отзывов пока нет</span>'}
         </div>
       </div>
