@@ -210,13 +210,35 @@
   </div>
 </section>
 
+<!-- ======= КОЛЕСО ЭМОЦИЙ ПЛУТЧИКА ======= -->
+<section class="section" id="plutchik">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Азбука чувств</span>
+      <h2>Колесо эмоций Роберта Плутчика</h2>
+      <p class="section-sub">Плутчик выделил 8 эмоциональных спектров. В каждом — по 3 эмоции, интенсивность которых возрастает от внешнего круга к внутреннему. Смешение соседних эмоций образует более сложные состояния.</p>
+    </div>
+
+    <div class="plutchik-grid">
+      <div class="card plutchik-legend" id="plutchikLegend"></div>
+      <div class="card plutchik-info">
+        <h3>Как читать колесо</h3>
+        <p><b>Интенсивность.</b> Внутри спектра эмоция усиливается от края к центру. Пример: безмятежность → радость → восторг.</p>
+        <p><b>Сложные эмоции.</b> Смешение двух соседних спектров даёт составное чувство. Пример: радость + доверие = любовь.</p>
+        <div class="dyads" id="plutchikDyads"></div>
+        <p class="muted">Колесо помогает точнее назвать своё состояние: определить интенсивность и понять, из каких простых эмоций складывается сложная.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ======= ORGANIZER ======= -->
 <section class="section section-soft" id="organizer">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow">Органайзер осознанности</span>
       <h2>Ежедневный ритуал заботы о себе</h2>
-      <p class="section-sub">Отмечайте эмоции, сон и энергию — а мы покажем скрытые закономерности вашего состояния.</p>
+      <p class="section-sub">Отмечайте настроение дня, сон и энергию — а мы покажем скрытые закономерности вашего состояния.</p>
     </div>
 
     <div class="streak-bar" id="streakBar">
@@ -228,7 +250,8 @@
 
     <div class="organizer-grid">
       <div class="card organizer-input">
-        <h3>Что вы чувствуете сейчас?</h3>
+        <h3>Настроение дня</h3>
+        <p class="muted emotions-hint">Выберите одну или несколько эмоций — так можно точнее сохранить состояние дня.</p>
         <div class="emotions" id="emotions"></div>
         <label class="field">
           <span>Заметка (по желанию)</span>
@@ -253,7 +276,14 @@
       </div>
 
       <div class="card organizer-analytics">
-        <h3>Аналитика связей</h3>
+        <div class="analytics-head">
+          <h3>Аналитика связей</h3>
+          <div class="period-toggle" id="periodToggle">
+            <button class="active" data-period="week">Неделя</button>
+            <button data-period="month">Месяц</button>
+            <button data-period="all">Всё время</button>
+          </div>
+        </div>
         <div class="chart" id="chart"><p class="chart-empty">Пока нет записей. Отметьте своё состояние — и здесь появится статистика.</p></div>
         <div class="insights" id="insights"></div>
         <div class="log" id="diaryLog"></div>

@@ -158,30 +158,78 @@ chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleFreeTe
 flow.start();
 
 /* ================= ОРГАНАЙЗЕР ЭМОЦИЙ ================= */
-const EMOTIONS = [
-  { name: 'Радость', color: '#FBBF24' },
-  { name: 'Спокойствие', color: '#22D3EE' },
-  { name: 'Тревога', color: '#8B5CF6' },
-  { name: 'Гнев', color: '#EF4444' },
-  { name: 'Грусть', color: '#6366F1' },
-  { name: 'Обида', color: '#EC4899' },
-  { name: 'Усталость', color: '#94A3B8' },
-  { name: 'Благодарность', color: '#10B981' },
+/* Колесо эмоций Роберта Плутчика: 8 спектров, в каждом 3 эмоции по возрастанию
+   интенсивности (край → центр). Смешение соседних спектров даёт сложные эмоции. */
+const PLUTCHIK = [
+  { spectrum: 'Радость',    color: '#FBBF24', levels: ['Безмятежность', 'Радость', 'Восторг'] },
+  { spectrum: 'Доверие',    color: '#84CC16', levels: ['Принятие', 'Доверие', 'Восхищение'] },
+  { spectrum: 'Страх',      color: '#22C55E', levels: ['Опасение', 'Страх', 'Ужас'] },
+  { spectrum: 'Удивление',  color: '#22D3EE', levels: ['Отвлечение', 'Удивление', 'Изумление'] },
+  { spectrum: 'Грусть',     color: '#6366F1', levels: ['Задумчивость', 'Грусть', 'Горе'] },
+  { spectrum: 'Отвращение', color: '#A855F7', levels: ['Скука', 'Отвращение', 'Омерзение'] },
+  { spectrum: 'Гнев',       color: '#EF4444', levels: ['Досада', 'Гнев', 'Ярость'] },
+  { spectrum: 'Ожидание',   color: '#F97316', levels: ['Интерес', 'Ожидание', 'Настороженность'] },
 ];
+// Сложные эмоции (диады) — смешение соседних спектров
+const PLUTCHIK_DYADS = [
+  ['Радость', 'Доверие', 'Любовь'],
+  ['Доверие', 'Страх', 'Покорность'],
+  ['Страх', 'Удивление', 'Трепет'],
+  ['Удивление', 'Грусть', 'Неодобрение'],
+  ['Грусть', 'Отвращение', 'Раскаяние'],
+  ['Отвращение', 'Гнев', 'Презрение'],
+  ['Гнев', 'Ожидание', 'Агрессия'],
+  ['Ожидание', 'Радость', 'Оптимизм'],
+];
+// Плоский список эмоций для органайзера (средняя интенсивность выделена)
+const EMOTIONS = PLUTCHIK.flatMap(sp =>
+  sp.levels.map((name, i) => ({ name, color: sp.color, spectrum: sp.spectrum, level: i + 1 }))
+);
+const emotionColor = name => (EMOTIONS.find(e => e.name === name) || {}).color || '#8B5CF6';
+
 const emotionsWrap = document.getElementById('emotions');
-let selectedEmotion = null;
-EMOTIONS.forEach(e => {
-  const b = document.createElement('button');
-  b.className = 'emotion';
-  b.style.setProperty('--e', e.color);
-  b.innerHTML = `<span class="dot"></span>${e.name}`;
-  b.onclick = () => {
-    document.querySelectorAll('.emotion').forEach(x => x.classList.remove('sel'));
-    b.classList.add('sel');
-    selectedEmotion = e;
-  };
-  emotionsWrap.appendChild(b);
+let selectedEmotions = [];  // мультивыбор «настроение дня»
+PLUTCHIK.forEach(sp => {
+  const group = document.createElement('div');
+  group.className = 'emotion-group';
+  group.innerHTML = `<span class="emotion-group-title" style="--e:${sp.color}">${sp.spectrum}</span>`;
+  sp.levels.forEach((name, i) => {
+    const b = document.createElement('button');
+    b.className = 'emotion lvl' + (i + 1);
+    b.type = 'button';
+    b.style.setProperty('--e', sp.color);
+    b.innerHTML = `<span class="dot"></span>${name}`;
+    b.onclick = () => {
+      const idx = selectedEmotions.findIndex(x => x.name === name);
+      if (idx >= 0) { selectedEmotions.splice(idx, 1); b.classList.remove('sel'); }
+      else { selectedEmotions.push({ name, color: sp.color, spectrum: sp.spectrum }); b.classList.add('sel'); }
+    };
+    group.appendChild(b);
+  });
+  emotionsWrap.appendChild(group);
 });
+
+// Легенда колеса Плутчика (справочный блок)
+(function renderPlutchik() {
+  const legend = document.getElementById('plutchikLegend');
+  const dyadsBox = document.getElementById('plutchikDyads');
+  if (legend) {
+    legend.innerHTML = '<div class="pl-title">8 спектров эмоций</div>' + PLUTCHIK.map(sp => `
+      <div class="pl-row" style="--e:${sp.color}">
+        <span class="pl-name">${sp.spectrum}</span>
+        <span class="pl-levels">
+          <i class="pl-lvl pl-l1">${sp.levels[0]}</i>
+          <i class="pl-lvl pl-l2">${sp.levels[1]}</i>
+          <i class="pl-lvl pl-l3">${sp.levels[2]}</i>
+        </span>
+      </div>`).join('');
+  }
+  if (dyadsBox) {
+    dyadsBox.innerHTML = PLUTCHIK_DYADS.map(([a, b, res]) =>
+      `<span class="dyad"><b style="--e:${emotionColor(a)}">${a}</b> + <b style="--e:${emotionColor(b)}">${b}</b> = <em>${res}</em></span>`
+    ).join('');
+  }
+})();
 
 const intensity = document.getElementById('intensity');
 const intensityVal = document.getElementById('intensityVal');
@@ -196,13 +244,27 @@ energy.addEventListener('input', () => energyVal.textContent = energy.value);
 const STORE_KEY = 'ml_diary';
 const loadEntries = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
 const saveEntries = e => localStorage.setItem(STORE_KEY, JSON.stringify(e));
+// Список эмоций записи (совместимость: старый формат — одна эмоция, новый — массив)
+const entryEmotions = e => (Array.isArray(e.emotions) && e.emotions.length)
+  ? e.emotions
+  : (e.emotion ? [{ name: e.emotion, color: e.color }] : []);
+const entryNames = e => entryEmotions(e).map(x => x.name);
+// Период аналитики: 'week' | 'month' | 'all'
+let statsPeriod = 'week';
+function periodEntries(entries) {
+  if (statsPeriod === 'all') return entries;
+  const days = statsPeriod === 'week' ? 7 : 30;
+  const from = Date.now() - days * 864e5;
+  return entries.filter(e => e.date >= from);
+}
 
 document.getElementById('saveEntry').addEventListener('click', () => {
-  if (!selectedEmotion) { alert('Выберите эмоцию, которую вы сейчас чувствуете.'); return; }
+  if (!selectedEmotions.length) { alert('Выберите хотя бы одну эмоцию, чтобы сохранить настроение дня.'); return; }
   const entries = loadEntries();
   entries.push({
-    emotion: selectedEmotion.name,
-    color: selectedEmotion.color,
+    emotions: selectedEmotions.map(e => ({ name: e.name, color: e.color, spectrum: e.spectrum })),
+    emotion: selectedEmotions[0].name,   // для совместимости со старым форматом
+    color: selectedEmotions[0].color,
     intensity: +intensity.value,
     sleep: +sleep.value,
     energy: +energy.value,
@@ -212,7 +274,7 @@ document.getElementById('saveEntry').addEventListener('click', () => {
   saveEntries(entries);
   document.getElementById('diaryNote').value = '';
   document.querySelectorAll('.emotion').forEach(x => x.classList.remove('sel'));
-  selectedEmotion = null;
+  selectedEmotions = [];
   intensity.value = 5; intensityVal.textContent = '5';
   renderDiary();
   celebrate();
@@ -257,6 +319,8 @@ function celebrate() {
 }
 
 /* ---- Инсайты: связь настроения со сном и энергией ---- */
+const NEG_SPECTRA = ['Страх', 'Грусть', 'Отвращение', 'Гнев'];
+const NEG_NAMES = ['Тревога','Гнев','Грусть','Обида','Усталость','Страх','Ужас','Опасение','Горе','Задумчивость','Отвращение','Омерзение','Скука','Ярость','Досада'];
 function renderInsights(entries) {
   const box = document.getElementById('insights');
   if (entries.length < 3) {
@@ -265,56 +329,80 @@ function renderInsights(entries) {
   }
   const withSleep = entries.filter(e => e.sleep != null);
   const insights = [];
-  // корреляция сон → интенсивность негатива (грубая эвристика для демо)
+  const isNeg = e => entryNames(e).some(n => NEG_NAMES.includes(n));
+  // корреляция сон → доля негатива (грубая эвристика для демо)
   const goodSleep = withSleep.filter(e => e.sleep >= 7);
   const badSleep = withSleep.filter(e => e.sleep < 7);
-  const NEG = ['Тревога','Гнев','Грусть','Обида','Усталость'];
-  const negShare = arr => arr.length ? Math.round(100 * arr.filter(e => NEG.includes(e.emotion)).length / arr.length) : null;
+  const negShare = arr => arr.length ? Math.round(100 * arr.filter(isNeg).length / arr.length) : null;
   const ng = negShare(goodSleep), nb = negShare(badSleep);
   if (ng != null && nb != null && nb - ng >= 15) {
     insights.push(`😴 В дни с хорошим сном негативных эмоций на <b>${nb - ng}%</b> меньше. Сон — ваш ресурс.`);
   }
   const avgEnergy = Math.round(10 * withSleep.reduce((a, e) => a + (e.energy || 0), 0) / (withSleep.length || 1)) / 10;
   if (avgEnergy) insights.push(`⚡ Средний уровень энергии: <b>${avgEnergy}/10</b>.`);
-  // самая частая эмоция
+  // самая частая эмоция (учитываем мультивыбор)
   const freq = {};
-  entries.forEach(e => freq[e.emotion] = (freq[e.emotion] || 0) + 1);
+  entries.forEach(e => entryNames(e).forEach(n => freq[n] = (freq[n] || 0) + 1));
   const top = Object.entries(freq).sort((a, b) => b[1] - a[1])[0];
   if (top) insights.push(`🎯 Чаще всего вы отмечаете: <b>${top[0]}</b>. Обратите на это внимание в практиках.`);
   box.innerHTML = insights.map(t => `<div class="insight">${t}</div>`).join('');
 }
 
 function renderDiary() {
-  const entries = loadEntries();
+  const all = loadEntries();
+  const entries = periodEntries(all);
   const chartEl = document.getElementById('chart');
   const logEl = document.getElementById('diaryLog');
-  renderStreak(entries);
+  renderStreak(all);
   renderInsights(entries);
   if (!entries.length) {
-    chartEl.innerHTML = '<p class="chart-empty">Пока нет записей. Отметьте своё состояние — и здесь появится статистика.</p>';
+    const msg = all.length
+      ? 'За выбранный период записей нет. Смените период или отметьте настроение дня.'
+      : 'Пока нет записей. Отметьте своё состояние — и здесь появится статистика.';
+    chartEl.innerHTML = `<p class="chart-empty">${msg}</p>`;
     logEl.innerHTML = '';
     return;
   }
-  const last = entries.slice(-10);
-  chartEl.innerHTML = last.map(e => {
+  const label = e => {
     const d = new Date(e.date);
-    const t = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-    return `<div class="bar" style="--e:${e.color}">
-      <div class="fill" style="height:${e.intensity * 10}%"></div>
-      <small>${t}</small></div>`;
+    return statsPeriod === 'all'
+      ? d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })
+      : (statsPeriod === 'month'
+          ? d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })
+          : d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0'));
+  };
+  const last = entries.slice(-Math.min(entries.length, statsPeriod === 'week' ? 10 : 31));
+  chartEl.innerHTML = last.map(e => {
+    const col = entryEmotions(e)[0]?.color || e.color || '#8B5CF6';
+    return `<div class="bar" style="--e:${col}">
+      <div class="fill" style="height:${(e.intensity || 5) * 10}%"></div>
+      <small>${label(e)}</small></div>`;
   }).join('');
-  logEl.innerHTML = entries.slice(-12).reverse().map(e => {
+  logEl.innerHTML = entries.slice(-14).reverse().map(e => {
     const d = new Date(e.date);
     const dt = d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' }) + ' ' +
       d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
     const meta = e.sleep != null ? ` <span class="log-meta">😴${e.sleep} ⚡${e.energy}</span>` : '';
-    return `<div class="log-item" style="--e:${e.color}">
-      <span class="tag">${e.emotion} · ${e.intensity}</span>
+    const tags = entryEmotions(e).map(x =>
+      `<span class="tag" style="--e:${x.color}">${x.name}</span>`).join('');
+    return `<div class="log-item" style="--e:${entryEmotions(e)[0]?.color || '#8B5CF6'}">
+      <span class="tags">${tags} <b class="tag-int">· ${e.intensity || 5}</b></span>
       <span class="txt">${e.note ? escapeHtml(e.note) : '<i>без заметки</i>'}${meta}</span>
       <time>${dt}</time></div>`;
   }).join('');
 }
 function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+// Переключатель периода аналитики
+(function initPeriodToggle() {
+  const t = document.getElementById('periodToggle');
+  if (!t) return;
+  t.querySelectorAll('button').forEach(b => b.onclick = () => {
+    t.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    statsPeriod = b.dataset.period;
+    renderDiary();
+  });
+})();
 renderDiary();
 
 /* ================= КАРТА ЛИЧНОСТИ (Дары и Поля) ================= */
@@ -644,20 +732,31 @@ function scrollToPractices(cat) {
   const USERS_KEY = 'ml_users';
   const SESSION_KEY = 'ml_session';
 
+  const PROMO_KEY = 'ml_promos';
+  const FEEDBACK_KEY = 'ml_feedback';
+
   const loadUsers = () => JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
   const saveUsers = u => localStorage.setItem(USERS_KEY, JSON.stringify(u));
   const getSession = () => localStorage.getItem(SESSION_KEY) || '';
   const setSession = login => login ? localStorage.setItem(SESSION_KEY, login) : localStorage.removeItem(SESSION_KEY);
   const findUser = login => loadUsers().find(u => u.login.toLowerCase() === String(login).trim().toLowerCase());
   const currentUser = () => findUser(getSession());
+  const isAdmin = u => u && u.role === 'admin';
 
-  // Демо-аккаунт: заводится один раз, чтобы можно было сразу войти и посмотреть кабинет.
-  (function seedDemo() {
+  const loadPromos = () => JSON.parse(localStorage.getItem(PROMO_KEY) || '[]');
+  const savePromos = p => localStorage.setItem(PROMO_KEY, JSON.stringify(p));
+  const loadFeedback = () => JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '[]');
+  const saveFeedback = f => localStorage.setItem(FEEDBACK_KEY, JSON.stringify(f));
+
+  // Стартовые аккаунты: demo (гость) + два администратора-разработчика (Светлана и Альбина).
+  (function seedAccounts() {
     const users = loadUsers();
-    if (!users.some(u => u.login === 'demo')) {
-      users.push({ name: 'Гость', login: 'demo', pass: 'demo123', created: Date.now() });
-      saveUsers(users);
-    }
+    let changed = false;
+    const ensure = u => { if (!users.some(x => x.login === u.login)) { users.push(u); changed = true; } };
+    ensure({ name: 'Гость', login: 'demo', pass: 'demo123', created: Date.now() });
+    ensure({ name: 'Светлана', login: 'sveta', pass: 'sveta-admin-2026', role: 'admin', created: Date.now() });
+    ensure({ name: 'Альбина', login: 'albina', pass: 'albina-admin-2026', role: 'admin', created: Date.now() });
+    if (changed) saveUsers(users);
   })();
 
   const authBtn = document.getElementById('authBtn');
@@ -778,6 +877,8 @@ function scrollToPractices(cat) {
         <button class="btn btn-outline" data-go="#practices">🧘 Практики</button>
         <button class="btn btn-outline" data-go="#bot">💬 Ассистент</button>
       </div>
+      ${isAdmin(u) ? '<button class="btn btn-lg am-admin-btn" id="toAdmin">🛠 Панель разработчика</button>' : ''}
+      <button class="btn btn-outline am-fb-btn" id="toFeedback">✍️ Оставить отзыв</button>
       <button class="am-logout" id="logoutBtn">Выйти из кабинета</button>
     `);
     modal.querySelector('.am-close').onclick = closeModal;
@@ -786,10 +887,138 @@ function scrollToPractices(cat) {
       const t = document.querySelector(b.dataset.go);
       if (t) t.scrollIntoView({ behavior: 'smooth' });
     });
+    const adminBtn = modal.querySelector('#toAdmin');
+    if (adminBtn) adminBtn.onclick = () => showAdminPanel();
+    modal.querySelector('#toFeedback').onclick = () => showFeedbackForm();
     modal.querySelector('#logoutBtn').onclick = () => {
       setSession('');
       renderAuthState();
       closeModal();
+    };
+  }
+
+  /* ---- Форма обратной связи ---- */
+  function showFeedbackForm(msg) {
+    const u = currentUser();
+    openModal(`
+      <button class="am-close" aria-label="Закрыть">×</button>
+      <h3 class="am-title">Обратная связь</h3>
+      <p class="am-sub">Расскажите, что понравилось или что улучшить — это увидят разработчики.</p>
+      ${msg ? `<div class="am-demo">${msg}</div>` : ''}
+      <form class="am-form" id="fbForm">
+        <label>Ваш отзыв<textarea name="text" rows="4" required placeholder="Ваши мысли, идеи, замечания…"></textarea></label>
+        <button type="submit" class="btn btn-primary btn-lg am-submit">Отправить</button>
+      </form>
+      <button class="am-logout" id="fbBack">← Назад</button>
+    `);
+    modal.querySelector('.am-close').onclick = closeModal;
+    modal.querySelector('#fbBack').onclick = () => showCabinet();
+    modal.querySelector('#fbForm').onsubmit = e => {
+      e.preventDefault();
+      const text = e.target.text.value.trim();
+      if (!text) return;
+      const fb = loadFeedback();
+      fb.push({ text, from: u ? (u.name || u.login) : 'аноним', date: Date.now() });
+      saveFeedback(fb);
+      showFeedbackForm('💜 Спасибо! Ваш отзыв сохранён.');
+    };
+  }
+
+  /* ---- Панель разработчика (админ: Светлана и Альбина) ---- */
+  function genPromoCode() {
+    const s = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let c = '';
+    for (let i = 0; i < 6; i++) c += s[Math.floor(Math.random() * s.length)];
+    return 'MTR-' + c;
+  }
+  function showAdminPanel() {
+    const u = currentUser();
+    if (!isAdmin(u)) { showLogin(); return; }
+    const users = loadUsers();
+    const entries = loadEntries();
+    const promos = loadPromos();
+    const feedback = loadFeedback();
+    // Сводная статистика по эмоциям (учёт мультивыбора)
+    const freq = {};
+    entries.forEach(e => entryNames(e).forEach(n => freq[n] = (freq[n] || 0) + 1));
+    const topEmotions = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const premiumCount = users.filter(x => x.premium).length;
+    const clientUsers = users.filter(x => !isAdmin(x));
+
+    openModal(`
+      <button class="am-close" aria-label="Закрыть">×</button>
+      <div class="am-hello">
+        <div class="am-avatar admin">🛠</div>
+        <div>
+          <h3 class="am-title">Панель разработчика</h3>
+          <p class="am-sub">${u.name} · полный доступ</p>
+        </div>
+      </div>
+      <div class="adm-note">⚠️ Демо-режим: показаны данные этого браузера. Сквозная статистика по всем пользователям появится после подключения серверной базы (Yandex/Astra Cloud из ТЗ).</div>
+
+      <div class="am-stats adm-stats">
+        <div class="am-stat"><b>${clientUsers.length}</b><span>пользователей</span></div>
+        <div class="am-stat"><b>${entries.length}</b><span>записей настроения</span></div>
+        <div class="am-stat"><b>${premiumCount}</b><span>с доступом Premium</span></div>
+      </div>
+
+      <div class="adm-block">
+        <h4>Топ эмоций</h4>
+        <div class="adm-emotions">
+          ${topEmotions.length ? topEmotions.map(([n, c]) =>
+            `<span class="adm-chip" style="--e:${emotionColor(n)}">${n} · ${c}</span>`).join('') : '<span class="muted">Пока нет данных</span>'}
+        </div>
+      </div>
+
+      <div class="adm-block">
+        <h4>Пользователи <span class="muted">(${clientUsers.length})</span></h4>
+        <div class="adm-users">
+          ${clientUsers.length ? clientUsers.map(x => `
+            <div class="adm-user">
+              <span class="adm-uname">${x.name || x.login} <i class="muted">@${x.login}</i></span>
+              <button class="adm-grant ${x.premium ? 'on' : ''}" data-login="${x.login}">
+                ${x.premium ? '✓ Premium' : 'Выдать доступ'}
+              </button>
+            </div>`).join('') : '<span class="muted">Зарегистрированных пользователей пока нет</span>'}
+        </div>
+      </div>
+
+      <div class="adm-block">
+        <h4>Промокоды</h4>
+        <button class="btn btn-outline adm-newpromo" id="newPromo">＋ Сгенерировать промокод</button>
+        <div class="adm-promos" id="admPromos">
+          ${promos.length ? promos.map(p =>
+            `<span class="adm-chip promo ${p.used ? 'used' : ''}">${p.code}${p.used ? ' · использован' : ''}</span>`).join('') : '<span class="muted">Промокодов пока нет</span>'}
+        </div>
+      </div>
+
+      <div class="adm-block">
+        <h4>Обратная связь <span class="muted">(${feedback.length})</span></h4>
+        <div class="adm-feedback">
+          ${feedback.length ? feedback.slice().reverse().map(f => `
+            <div class="adm-fb">
+              <span class="adm-fb-txt">${escapeHtml(f.text)}</span>
+              <time>${new Date(f.date).toLocaleDateString('ru-RU')} · ${f.from || 'аноним'}</time>
+            </div>`).join('') : '<span class="muted">Отзывов пока нет</span>'}
+        </div>
+      </div>
+
+      <button class="am-logout" id="backCab">← Назад в кабинет</button>
+    `);
+    modal.querySelector('.am-close').onclick = closeModal;
+    modal.querySelector('#backCab').onclick = () => showCabinet();
+    // Выдача/снятие Premium-доступа
+    modal.querySelectorAll('.adm-grant').forEach(b => b.onclick = () => {
+      const list = loadUsers();
+      const target = list.find(x => x.login === b.dataset.login);
+      if (target) { target.premium = !target.premium; saveUsers(list); showAdminPanel(); }
+    });
+    // Генерация промокода
+    modal.querySelector('#newPromo').onclick = () => {
+      const p = loadPromos();
+      p.push({ code: genPromoCode(), used: false, created: Date.now(), by: u.login });
+      savePromos(p);
+      showAdminPanel();
     };
   }
 
