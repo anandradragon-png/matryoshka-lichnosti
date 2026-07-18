@@ -204,6 +204,7 @@ a{color:inherit;text-decoration:none}
 .practice-filters button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 18px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:.2s}
 .practice-filters button.active{background:var(--grad);color:#fff;border-color:transparent}
 .practices{grid-template-columns:repeat(3,1fr)}
+.practices-hint{grid-column:1/-1;text-align:center;color:var(--muted);font-size:15px;font-weight:600;background:#fff;border:1px dashed var(--line);border-radius:16px;padding:34px 20px;margin:0}
 .practice-card{cursor:pointer;transition:.2s;border-top:4px solid var(--c)}
 .practice-card:hover{transform:translateY(-4px)}
 .practice-card .p-icon{font-size:28px;margin-bottom:10px}

@@ -608,12 +608,11 @@ const EMOTION_GUIDE = {
 
 const filtersWrap = document.getElementById('practiceFilters');
 const grid = document.getElementById('practicesGrid');
-let activeCat = 'все';
+let activeCat = null;   // практики появляются только после клика по разделу
 
 CATS.forEach(c => {
   const b = document.createElement('button');
   b.textContent = c[0].toUpperCase() + c.slice(1);
-  if (c === 'все') b.classList.add('active');
   b.onclick = () => filterPractices(c);
   b.dataset.cat = c;
   filtersWrap.appendChild(b);
@@ -626,6 +625,10 @@ function filterPractices(cat) {
   renderPractices();
 }
 function renderPractices() {
+  if (!activeCat) {
+    grid.innerHTML = `<p class="practices-hint">👆 Выберите раздел выше, чтобы увидеть практики этого направления.</p>`;
+    return;
+  }
   const list = activeCat === 'все' ? PRACTICES : PRACTICES.filter(p => p.cat === activeCat);
   grid.innerHTML = list.map((p, i) => `
     <article class="card practice-card" style="--c:${CAT_COLOR[p.cat]}" data-idx="${PRACTICES.indexOf(p)}" tabindex="0" role="button">
