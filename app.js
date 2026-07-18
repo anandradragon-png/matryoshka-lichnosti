@@ -1045,5 +1045,9 @@ function scrollToPractices(cat) {
     else showLogin();
   });
 
+  // Кнопка обратной связи в блоке «Путь пользователя»
+  const journeyFb = document.getElementById('journeyFeedbackBtn');
+  if (journeyFb) journeyFb.addEventListener('click', () => showFeedbackForm());
+
   renderAuthState();
 })();

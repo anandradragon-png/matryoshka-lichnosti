@@ -360,6 +360,25 @@ a{color:inherit;text-decoration:none}
 .b2b-price{font-size:24px;font-weight:800;margin-bottom:16px}
 .b2b-price span{display:block;font-size:13px;color:#cfc9e8;font-weight:600}
 
+/* B2B — самодостаточная отдельная опция для бизнеса (в начале, выделенная) */
+.b2b-standalone{position:relative;margin-top:0;margin-bottom:36px;overflow:hidden;
+  border:2px solid rgba(196,181,253,.55);
+  box-shadow:0 20px 60px rgba(124,58,237,.35),0 0 0 6px rgba(124,58,237,.06)}
+.b2b-standalone .b2b-ribbon{position:absolute;top:18px;right:-52px;transform:rotate(45deg);
+  background:var(--pink,#ec4899);color:#fff;font-size:12px;font-weight:800;letter-spacing:.02em;
+  padding:6px 60px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.b2b-standalone .b2b-cta{background:rgba(255,255,255,.06);border:1px solid rgba(196,181,253,.35);
+  border-radius:18px;padding:22px 18px}
+.b2b-standalone .b2b-price{font-size:30px}
+.pricing-divider{display:flex;align-items:center;gap:16px;margin:8px 0 24px;color:var(--muted);
+  font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.pricing-divider::before,.pricing-divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* Journey — ссылка и кнопка */
+.journey-link{display:inline-block;margin-top:12px;font-weight:800;font-size:14px;color:var(--purple);text-decoration:none}
+.journey-link:hover{text-decoration:underline}
+.journey-fb-btn{margin-top:14px}
+
 /* Responsive */
 @media(max-width:960px){
   .main-nav,.header-actions{display:none}
