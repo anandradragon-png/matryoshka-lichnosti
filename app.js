@@ -18,10 +18,46 @@ window.addEventListener('scroll', () => {
 });
 
 /* ================= ЧАТ-БОТ ================= */
+/* URL серверной функции-прослойки YandexGPT (Yandex Cloud Function).
+   Пусто → работает демо-сценарий. После деплоя сюда вписывается адрес
+   вида https://functions.yandexcloud.net/<function-id> и бот отвечает
+   вживую через YandexGPT. Ключ к ИИ хранится ТОЛЬКО на сервере. */
+const BOT_API_URL = '';
 const chat = document.getElementById('chat');
 const quickReplies = document.getElementById('quickReplies');
 const chatInput = document.getElementById('chatInput');
 const chatSend = document.getElementById('chatSend');
+
+/* История диалога для контекста (роль + текст) */
+const chatHistory = [];
+
+/* Запрос к живому ИИ через серверную прослойку */
+async function callBotAPI(text) {
+  const res = await fetch(BOT_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: text, history: chatHistory.slice(-8) }),
+  });
+  if (!res.ok) throw new Error('bot api ' + res.status);
+  const data = await res.json();
+  if (!data.reply) throw new Error(data.error || 'no reply');
+  return data.reply;
+}
+
+/* Ответ живого ИИ с индикатором «печатает…» */
+async function botSayLive(text) {
+  const t = typing();
+  try {
+    const reply = await callBotAPI(text);
+    t.remove();
+    addMsg(escapeHtml(reply).replace(/\n/g, '<br>'));
+    chatHistory.push({ role: 'user', text });
+    chatHistory.push({ role: 'assistant', text: reply });
+  } catch (e) {
+    t.remove();
+    addMsg('Извините, не получилось получить ответ прямо сейчас. Попробуйте ещё раз чуть позже. 💜');
+  }
+}
 
 function addMsg(text, who = 'bot') {
   const el = document.createElement('div');
@@ -134,6 +170,8 @@ function handleFreeText() {
       setQuick([{ label: 'Спасибо, мне нужна поддержка', action: () => flow.feel('Грусть') }]));
     return;
   }
+  // Живой ИИ через YandexGPT, если сервер подключён; иначе — демо-сценарий ниже
+  if (BOT_API_URL) { setQuick([]); return void botSayLive(v); }
   if (/(трев|паник|страх|боюсь|волну|беспоко)/.test(low)) return flow.feel('Тревога');
   if (/(зл|гнев|раздраж|бесит|злюсь|ярост)/.test(low)) return flow.feel('Гнев');
   if (/(груст|тоск|плак|печал|уныл)/.test(low)) return flow.feel('Грусть');
