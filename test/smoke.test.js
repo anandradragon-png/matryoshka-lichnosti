@@ -11,8 +11,20 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 const ROOT = path.join(__dirname, '..');
 const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
 
-const darsCode = read('dars-data.js');
-const appCode = read('app.js');
+// Порядок совпадает с подключением скриптов в index.html.
+const SCRIPTS = [
+  'dars-data.js',
+  'js/core.js',
+  'js/util.js',
+  'js/chat.js',
+  'js/organizer.js',
+  'js/map.js',
+  'js/practices.js',
+  'js/billing.js',
+  'js/account.js',
+  'js/cookie.js',
+];
+const scriptCode = SCRIPTS.map(read);
 
 // Загружает страницу и скрипты. Возвращает { dom, errors }.
 function boot() {
@@ -41,8 +53,7 @@ function boot() {
     s.textContent = code;
     window.document.body.appendChild(s);
   };
-  inject(darsCode);
-  inject(appCode);
+  scriptCode.forEach(inject);
   return { dom, errors };
 }
 

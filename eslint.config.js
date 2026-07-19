@@ -2,42 +2,28 @@ const js = require('@eslint/js');
 const globals = require('globals');
 
 // Плоская конфигурация ESLint 9.
-// Прототип — классические браузерные скрипты (не модули), файлы делят одну
-// глобальную область: dars-data.js объявляет данные/функции, которые использует
-// app.js. Поэтому эти имена объявлены как readonly-глобалы, чтобы no-undef не
-// давал ложных срабатываний. После разбивки на ES-модули (пункт 7) эту секцию
-// упростим.
+// Прототип — классические браузерные скрипты (не ES-модули): dars-data.js и
+// файлы js/*.js делят одну общую глобальную область и вызывают функции друг
+// друга по имени. ESLint анализирует каждый файл отдельно и не видит эти связи,
+// поэтому no-undef здесь дал бы массу ложных срабатываний и отключён именно для
+// браузерных файлов. Остальные правила (no-unused-vars, no-redeclare,
+// no-dupe-keys, no-cond-assign и т.д.) работают и ловят реальные ошибки.
+// После перехода на настоящие ES-модули с import/export no-undef можно вернуть.
 module.exports = [
   { ignores: ['node_modules/**', 'docs/**', '.git/**'] },
   js.configs.recommended,
   {
-    // Общие настройки для браузерных скриптов прототипа.
-    files: ['app.js', 'dars-data.js'],
+    files: ['js/**/*.js', 'dars-data.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'script',
       globals: { ...globals.browser },
     },
     rules: {
-      // На прототипе часть верхнеуровневых значений «используется» из другого
-      // файла, поэтому глобальные unused не считаем ошибкой — только локальные.
+      'no-undef': 'off',
+      // Верхнеуровневые значения часто «используются» из другого файла, поэтому
+      // глобальные unused не считаем ошибкой — только локальные.
       'no-unused-vars': ['warn', { vars: 'local', args: 'none', caughtErrors: 'none' }],
-      'no-undef': 'error',
-    },
-  },
-  {
-    // app.js использует данные/функции, объявленные в dars-data.js.
-    files: ['app.js'],
-    languageOptions: {
-      globals: {
-        FIELDS: 'readonly',
-        DARS: 'readonly',
-        reduceDigit: 'readonly',
-        sumDigits: 'readonly',
-        calculateDar: 'readonly',
-        detectType: 'readonly',
-        getPersonalityCard: 'readonly',
-      },
     },
   },
   {
