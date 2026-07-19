@@ -1,0 +1,26 @@
+# Секреты и ключи — НИКОГДА не коммитить в публичный репозиторий
+.env
+.env.*
+*.key
+*.pem
+authorized_key.json
+key.json
+sa-key*.json
+*credentials*.json
+
+# Бинарники и инструменты
+yc.exe
+*.exe
+
+# Служебные файлы ОС/редакторов
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+
+# Зависимости (если появятся)
+node_modules/
+
+# Служебные папки инструментов
+.claude/

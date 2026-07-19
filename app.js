@@ -1,5 +1,18 @@
 /* ================= Матрёшка Личности — прототип ================= */
 
+/* ---------- Единый реестр ключей localStorage ----------
+   Все ключи хранилища собраны здесь, чтобы они не рассинхронизировались
+   при правках. Добавляя новое хранилище, регистрируйте ключ в этом объекте
+   и обращайтесь через ML_KEYS.<имя>, а не строкой-литералом. */
+const ML_KEYS = {
+  diary: 'ml_diary',
+  users: 'ml_users',
+  session: 'ml_session',
+  promos: 'ml_promos',
+  feedback: 'ml_feedback',
+  cookie: 'ml_cookie_consent',
+};
+
 /* ---------- Мобильное меню + активная навигация ---------- */
 const burger = document.getElementById('burger');
 const nav = document.getElementById('mainNav');
@@ -301,7 +314,7 @@ intensity.addEventListener('input', () => intensityVal.textContent = intensity.v
 sleep.addEventListener('input', () => sleepVal.textContent = sleep.value);
 energy.addEventListener('input', () => energyVal.textContent = energy.value);
 
-const STORE_KEY = 'ml_diary';
+const STORE_KEY = ML_KEYS.diary;
 const loadEntries = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
 const saveEntries = e => localStorage.setItem(STORE_KEY, JSON.stringify(e));
 // Список эмоций записи (совместимость: старый формат — одна эмоция, новый — массив)
@@ -792,11 +805,11 @@ function scrollToPractices(cat) {
 
 /* ================= ЛИЧНЫЙ КАБИНЕТ (вход / регистрация) ================= */
 (function account() {
-  const USERS_KEY = 'ml_users';
-  const SESSION_KEY = 'ml_session';
+  const USERS_KEY = ML_KEYS.users;
+  const SESSION_KEY = ML_KEYS.session;
 
-  const PROMO_KEY = 'ml_promos';
-  const FEEDBACK_KEY = 'ml_feedback';
+  const PROMO_KEY = ML_KEYS.promos;
+  const FEEDBACK_KEY = ML_KEYS.feedback;
 
   const loadUsers = () => JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
   const saveUsers = u => localStorage.setItem(USERS_KEY, JSON.stringify(u));
@@ -821,10 +834,19 @@ function scrollToPractices(cat) {
       // Подстраховка: гарантируем роль администратора у аккаунтов-разработчиков,
       // даже если аккаунт был создан ранней версией без роли.
       if (u.role && ex.role !== u.role) { ex.role = u.role; changed = true; }
+      // Пароль сид-аккаунтов авторитетно берётся из кода: если он менялся
+      // (ротация), синхронизируем существующую запись в localStorage.
+      if (u.pass && ex.pass !== u.pass) { ex.pass = u.pass; changed = true; }
     };
+    // ВНИМАНИЕ: это временные учётки прототипа. Проверка пароля пока идёт
+    // на клиенте (localStorage), поэтому эти значения НЕ являются настоящей
+    // защитой — после подключения бэкенда (post-юрлицо) вход перейдёт на
+    // серверную авторизацию с хешированием паролей (bcrypt/argon2).
+    // Пароли специально заменены на уникальные, не используемые на других
+    // сервисах, чтобы исключить риск повторного использования.
     ensure({ name: 'Гость', login: 'demo', pass: 'demo123', created: Date.now() });
-    ensure({ name: 'Светлана', login: 'sveta', pass: 'sveta-admin-2026', role: 'admin', created: Date.now() });
-    ensure({ name: 'Альбина', login: 'albina', pass: 'albina-admin-2026', role: 'admin', created: Date.now() });
+    ensure({ name: 'Светлана', login: 'sveta', pass: 'Mtr$Sv-2026-q7Xk', role: 'admin', created: Date.now() });
+    ensure({ name: 'Альбина', login: 'albina', pass: 'Mtr$Al-2026-w9Rb', role: 'admin', created: Date.now() });
     if (changed) saveUsers(users);
   })();
 
@@ -1133,7 +1155,7 @@ function scrollToPractices(cat) {
 (function () {
   const banner = document.getElementById('cookieBanner');
   if (!banner) return;
-  const KEY = 'ml_cookie_consent';
+  const KEY = ML_KEYS.cookie;
   if (!localStorage.getItem(KEY)) banner.hidden = false;
   const decide = choice => {
     localStorage.setItem(KEY, JSON.stringify({ choice, at: new Date().toISOString() }));
