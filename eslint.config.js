@@ -2,18 +2,27 @@ const js = require('@eslint/js');
 const globals = require('globals');
 
 // Плоская конфигурация ESLint 9.
-// Прототип — классические браузерные скрипты (не ES-модули): dars-data.js и
-// файлы js/*.js делят одну общую глобальную область и вызывают функции друг
-// друга по имени. ESLint анализирует каждый файл отдельно и не видит эти связи,
-// поэтому no-undef здесь дал бы массу ложных срабатываний и отключён именно для
-// браузерных файлов. Остальные правила (no-unused-vars, no-redeclare,
-// no-dupe-keys, no-cond-assign и т.д.) работают и ловят реальные ошибки.
-// После перехода на настоящие ES-модули с import/export no-undef можно вернуть.
+// Приложение «Матрёшка» переведено на настоящие ES-модули (import/export),
+// поэтому для js/**/*.js включён no-undef — ESLint видит связи через импорты и
+// ловит обращения к необъявленным именам. dars-data.js — отдельный проект
+// (YupDar): это классический скрипт, задающий window.YupDar; для него сохранён
+// sourceType 'script' и no-undef выключен (файл самодостаточен, менять нельзя).
 module.exports = [
   { ignores: ['node_modules/**', 'docs/**', '.git/**'] },
   js.configs.recommended,
   {
-    files: ['js/**/*.js', 'dars-data.js'],
+    files: ['js/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: { ...globals.browser },
+    },
+    rules: {
+      'no-unused-vars': ['warn', { args: 'none', caughtErrors: 'none' }],
+    },
+  },
+  {
+    files: ['dars-data.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'script',
@@ -21,17 +30,24 @@ module.exports = [
     },
     rules: {
       'no-undef': 'off',
-      // Верхнеуровневые значения часто «используются» из другого файла, поэтому
-      // глобальные unused не считаем ошибкой — только локальные.
-      'no-unused-vars': ['warn', { vars: 'local', args: 'none', caughtErrors: 'none' }],
     },
   },
   {
-    files: ['eslint.config.js', 'test/**/*.js'],
+    files: ['eslint.config.js', 'vitest.config.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'commonjs',
       globals: { ...globals.node },
+    },
+  },
+  {
+    // Тесты — ES-модули (import), исполняются в jsdom: нужны и node-, и
+    // браузерные глобалы. Vitest-хелперы импортируются из 'vitest' явно.
+    files: ['test/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: { ...globals.node, ...globals.browser },
     },
   },
 ];

@@ -1,7 +1,7 @@
 /* ================= ПРАКТИКИ =================
    Каждая практика: категория, иконка, название, краткое описание, время,
    пошаговая инструкция (steps) и совет, когда применять (when). */
-const PRACTICES = [
+export const PRACTICES = [
   /* --- ДЫХАНИЕ --- */
   { cat:'дыхание', icon:'🌬️', title:'Дыхание по квадрату', desc:'Вдох 4 — задержка 4 — выдох 4 — пауза 4. Успокаивает нервную систему.', time:'5 мин',
     when:'Когда тревожно, перед важным событием или чтобы вернуть контроль.',
@@ -134,7 +134,7 @@ const CATS = ['все', 'дыхание', 'рисование', 'звучани�
 const CAT_COLOR = { 'дыхание':'#22D3EE','рисование':'#EC4899','звучание':'#8B5CF6','тело':'#10B981','медитация':'#FBBF24','письмо':'#6366F1','мышление':'#F97316' };
 
 /* --- Гид по эмоциям: текст поддержки + рекомендованное направление практик --- */
-const EMOTION_GUIDE = {
+export const EMOTION_GUIDE = {
   'Тревога':      { emoji:'😟', rec:'дыхание',   text:'Тревога часто живёт в теле — сжатие в груди, поверхностное дыхание. Это нормально. Давайте мягко её проживём и вернём себе опору.' },
   'Гнев':         { emoji:'😠', rec:'звучание',  text:'Злость нередко прикрывает страх или усталость. У вас есть право её чувствовать. Направим эту энергию в безопасное русло.' },
   'Грусть':       { emoji:'😢', rec:'письмо',    text:'Грусть тоже важна и хочет быть прожитой. Не нужно её прогонять — давайте побудем с ней рядом и мягко поддержим себя.' },
@@ -157,7 +157,7 @@ CATS.forEach(c => {
   filtersWrap.appendChild(b);
 });
 
-function filterPractices(cat) {
+export function filterPractices(cat) {
   activeCat = cat;
   document.querySelectorAll('#practiceFilters button').forEach(b =>
     b.classList.toggle('active', b.dataset.cat === cat));
@@ -189,7 +189,7 @@ function renderPractices() {
 renderPractices();
 
 /* --- Модальное окно с пошаговой инструкцией практики --- */
-function openPractice(p) {
+export function openPractice(p) {
   if (!p) return;
   let modal = document.getElementById('practiceModal');
   if (!modal) {
@@ -225,12 +225,7 @@ function closePractice() {
   if (modal) modal.classList.remove('open');
   document.body.style.overflow = '';
 }
-/* Открыть практику по категории (для рекомендаций бота) */
-function openFirstPracticeOf(cat) {
-  const p = PRACTICES.find(x => x.cat === cat);
-  if (p) openPractice(p);
-}
-function scrollToPractices(cat) {
+export function scrollToPractices(cat) {
   document.querySelector('#practices').scrollIntoView({ behavior:'smooth' });
   if (cat) filterPractices(cat);
 }

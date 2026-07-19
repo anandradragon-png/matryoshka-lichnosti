@@ -1,3 +1,7 @@
+import { ML_KEYS } from './core.js';
+import { escapeHtml } from './util.js';
+import { loadEntries, computeStreak, emotionColor, entryNames } from './organizer.js';
+
 /* ================= ЛИЧНЫЙ КАБИНЕТ (вход / регистрация) ================= */
 (function account() {
   const USERS_KEY = ML_KEYS.users;

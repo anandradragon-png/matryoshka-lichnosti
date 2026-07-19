@@ -1,3 +1,5 @@
+import { ML_KEYS } from './core.js';
+
 /* ================= COOKIE-БАННЕР ================= */
 (function () {
   const banner = document.getElementById('cookieBanner');

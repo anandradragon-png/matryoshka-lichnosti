@@ -578,16 +578,9 @@
   </div>
 </div>
 
-<!-- Порядок важен: файлы делят общую глобальную область (см. CLAUDE.md). -->
+<!-- dars-data.js — классический скрипт (проект YupDar): задаёт window.YupDar ДО модулей. -->
 <script defer src="dars-data.js"></script>
-<script defer src="js/core.js"></script>
-<script defer src="js/util.js"></script>
-<script defer src="js/chat.js"></script>
-<script defer src="js/organizer.js"></script>
-<script defer src="js/map.js"></script>
-<script defer src="js/practices.js"></script>
-<script defer src="js/billing.js"></script>
-<script defer src="js/account.js"></script>
-<script defer src="js/cookie.js"></script>
+<!-- Приложение «Матрёшка» — ES-модули. Точка входа импортирует остальное в нужном порядке (см. CLAUDE.md). -->
+<script type="module" src="js/main.js"></script>
 </body>
 </html>

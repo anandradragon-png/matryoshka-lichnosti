@@ -1,3 +1,6 @@
+import { ML_KEYS } from './core.js';
+import { escapeHtml } from './util.js';
+
 /* ================= ОРГАНАЙЗЕР ЭМОЦИЙ ================= */
 /* Колесо эмоций Роберта Плутчика: 8 спектров, в каждом 3 эмоции по возрастанию
    интенсивности (край → центр). Смешение соседних спектров даёт сложные эмоции. */
@@ -26,7 +29,7 @@ const PLUTCHIK_DYADS = [
 const EMOTIONS = PLUTCHIK.flatMap(sp =>
   sp.levels.map((name, i) => ({ name, color: sp.color, spectrum: sp.spectrum, level: i + 1 }))
 );
-const emotionColor = name => (EMOTIONS.find(e => e.name === name) || {}).color || '#8B5CF6';
+export const emotionColor = name => (EMOTIONS.find(e => e.name === name) || {}).color || '#8B5CF6';
 
 const emotionsWrap = document.getElementById('emotions');
 let selectedEmotions = [];  // мультивыбор «настроение дня»
@@ -83,13 +86,13 @@ sleep.addEventListener('input', () => sleepVal.textContent = sleep.value);
 energy.addEventListener('input', () => energyVal.textContent = energy.value);
 
 const STORE_KEY = ML_KEYS.diary;
-const loadEntries = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+export const loadEntries = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
 const saveEntries = e => localStorage.setItem(STORE_KEY, JSON.stringify(e));
 // Список эмоций записи (совместимость: старый формат — одна эмоция, новый — массив)
 const entryEmotions = e => (Array.isArray(e.emotions) && e.emotions.length)
   ? e.emotions
   : (e.emotion ? [{ name: e.emotion, color: e.color }] : []);
-const entryNames = e => entryEmotions(e).map(x => x.name);
+export const entryNames = e => entryEmotions(e).map(x => x.name);
 // Период аналитики: 'week' | 'month' | 'all'
 let statsPeriod = 'week';
 function periodEntries(entries) {
@@ -123,7 +126,7 @@ document.getElementById('saveEntry').addEventListener('click', () => {
 
 /* ---- Стрик и прогресс по слоям матрёшки (движок удержания) ---- */
 const dayKey = ts => { const d = new Date(ts); return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(); };
-function computeStreak(entries) {
+export function computeStreak(entries) {
   if (!entries.length) return 0;
   const days = new Set(entries.map(e => dayKey(e.date)));
   let streak = 0;
@@ -160,7 +163,6 @@ function celebrate() {
 }
 
 /* ---- Инсайты: связь настроения со сном и энергией ---- */
-const NEG_SPECTRA = ['Страх', 'Грусть', 'Отвращение', 'Гнев'];
 const NEG_NAMES = ['Тревога','Гнев','Грусть','Обида','Усталость','Страх','Ужас','Опасение','Горе','Задумчивость','Отвращение','Омерзение','Скука','Ярость','Досада'];
 function renderInsights(entries) {
   const box = document.getElementById('insights');

@@ -1,3 +1,12 @@
+import { escapeHtml } from './util.js';
+import {
+  EMOTION_GUIDE,
+  PRACTICES,
+  openPractice,
+  scrollToPractices,
+  filterPractices,
+} from './practices.js';
+
 /* ================= ЧАТ-БОТ ================= */
 /* URL серверной функции-прослойки YandexGPT (Yandex Cloud Function).
    Пусто → работает демо-сценарий. После деплоя сюда вписывается адрес
