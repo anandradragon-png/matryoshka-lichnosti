@@ -172,9 +172,31 @@ function handleFreeText() {
   }
   // Живой ИИ через YandexGPT, если сервер подключён; иначе — демо-сценарий ниже
   if (BOT_API_URL) { setQuick([]); return void botSayLive(v); }
+  // Приветствие
+  if (/^(привет|здравств|добрый|хай|доброе утро|хеллоу|hello|hi)/.test(low)) {
+    botSay('Здравствуйте! Рада, что вы здесь. 🪆 Как вы себя чувствуете прямо сейчас?').then(() =>
+      setQuick([
+        { label: '😟 Тревожно', action: () => flow.feel('Тревога') },
+        { label: '😢 Грустно', action: () => flow.feel('Грусть') },
+        { label: '😮‍💨 Устал(а)', action: () => flow.feel('Усталость') },
+        { label: '🙂 Хорошо', action: () => flow.feel('Радость') },
+      ]));
+    return;
+  }
+  // Вопрос «кто ты / что умеешь»
+  if (/(кто ты|ты бот|ты человек|ты живой|что ты умеешь|ты ии|искусственн)/.test(low)) {
+    botSay('Я — ИИ-ассистент «Матрёшки»: помогаю замечать, называть и мягко проживать эмоции, подбираю простые техники. Я не заменяю живого специалиста — в приложении есть психологи-эмотологи. О чём хотите поговорить?').then(() =>
+      setQuick([{ label: 'О моём состоянии', action: flow.dialog }, { label: 'Что такое эмотология?', action: flow.about }]));
+    return;
+  }
+  // Благодарность пользователя
+  if (/^(спасибо|благодарю|спс|thanks)/.test(low)) {
+    botSay('Пожалуйста. 💜 Я рядом, если захотите продолжить.').then(() => flow.after());
+    return;
+  }
   if (/(трев|паник|страх|боюсь|волну|беспоко)/.test(low)) return flow.feel('Тревога');
   if (/(зл|гнев|раздраж|бесит|злюсь|ярост)/.test(low)) return flow.feel('Гнев');
-  if (/(груст|тоск|плак|печал|уныл)/.test(low)) return flow.feel('Грусть');
+  if (/(груст|тоск|плак|печал|уныл|одинок|пусто|стыд|вина|виноват|никчём)/.test(low)) return flow.feel('Грусть');
   if (/(обид|предал|несправедлив|задел)/.test(low)) return flow.feel('Обида');
   if (/(устал|вымот|нет сил|истощ|выгор|разбит)/.test(low)) return flow.feel('Усталость');
   if (/(благодар|признат)/.test(low)) return flow.feel('Благодарность');
@@ -873,6 +895,16 @@ function scrollToPractices(cat) {
         <label>Как к вам обращаться<input type="text" name="name" autocomplete="name" required></label>
         <label>Логин или e-mail<input type="text" name="login" autocomplete="username" required></label>
         <label>Пароль (мин. 4 символа)<input type="password" name="pass" autocomplete="new-password" minlength="4" required></label>
+        <div class="am-consents">
+          <label class="am-consent"><input type="checkbox" name="c_pdn">
+            <span>Я даю <a href="docs/soglasie-pdn.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a> <span class="am-consent-req">*</span></span></label>
+          <label class="am-consent"><input type="checkbox" name="c_special">
+            <span>Я даю <a href="docs/soglasie-spec-kategorii.html" target="_blank" rel="noopener">согласие на обработку специальных категорий данных</a> (о психоэмоциональном состоянии) <span class="am-consent-req">*</span></span></label>
+          <label class="am-consent"><input type="checkbox" name="c_privacy">
+            <span>Я ознакомлен(а) и принимаю <a href="docs/politika-konfidencialnosti.html" target="_blank" rel="noopener">Политику конфиденциальности</a> <span class="am-consent-req">*</span></span></label>
+          <label class="am-consent"><input type="checkbox" name="c_terms">
+            <span>Я принимаю <a href="docs/polzovatelskoe-soglashenie.html" target="_blank" rel="noopener">Пользовательское соглашение</a> <span class="am-consent-req">*</span></span></label>
+        </div>
         <button type="submit" class="btn btn-primary btn-lg am-submit">Создать кабинет</button>
       </form>
       <div class="am-switch">Уже есть аккаунт? <button type="button" id="toLogin">Войти</button></div>
@@ -884,9 +916,13 @@ function scrollToPractices(cat) {
       const name = e.target.name.value.trim();
       const login = e.target.login.value.trim();
       const pass = e.target.pass.value;
+      if (!e.target.c_pdn.checked || !e.target.c_special.checked || !e.target.c_privacy.checked || !e.target.c_terms.checked) {
+        showRegister('Чтобы создать кабинет, отметьте все четыре обязательных согласия.'); return;
+      }
       if (findUser(login)) { showRegister('Такой логин уже занят. Выберите другой или войдите.'); return; }
       const users = loadUsers();
-      users.push({ name, login, pass, created: Date.now() });
+      users.push({ name, login, pass, created: Date.now(),
+        consent: { pdn: true, special: true, privacy: true, terms: true, at: new Date().toISOString() } });
       saveUsers(users);
       setSession(login);
       renderAuthState();
@@ -1091,4 +1127,18 @@ function scrollToPractices(cat) {
   if (journeyFb) journeyFb.addEventListener('click', () => showFeedbackForm());
 
   renderAuthState();
+})();
+
+/* ================= COOKIE-БАННЕР ================= */
+(function () {
+  const banner = document.getElementById('cookieBanner');
+  if (!banner) return;
+  const KEY = 'ml_cookie_consent';
+  if (!localStorage.getItem(KEY)) banner.hidden = false;
+  const decide = choice => {
+    localStorage.setItem(KEY, JSON.stringify({ choice, at: new Date().toISOString() }));
+    banner.hidden = true;
+  };
+  document.getElementById('cookieAccept').addEventListener('click', () => decide('all'));
+  document.getElementById('cookieDecline').addEventListener('click', () => decide('necessary'));
 })();

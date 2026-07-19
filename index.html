@@ -237,6 +237,7 @@
           <input type="text" id="chatInput" placeholder="Напишите сообщение…" autocomplete="off" />
           <button id="chatSend" aria-label="Отправить">➤</button>
         </div>
+        <p class="chat-disclaimer">Я ИИ-ассистент поддержки и не заменяю врача. В кризисной ситуации звоните на телефон доверия <b>8-800-2000-122</b> или в службу <b>112</b>.</p>
       </div>
       <div class="phone-note card">
         <h3>Что умеет ассистент</h3>
@@ -446,7 +447,7 @@
       <div class="b2b-text">
         <span class="eyebrow">Для бизнеса · B2B</span>
         <h3>Матрёшка для команд</h3>
-        <p>Программа эмоционального благополучия для сотрудников: анонимная аналитика состояния команды для HR, доступ к практикам и инструментам типологии, снижение выгорания и текучести. Оплачивает компания — сотрудники пользуются бесплатно.</p>
+        <p>Программа эмоционального благополучия для сотрудников: анонимная аналитика состояния команды для HR, доступ к практикам и инструментам типологии, снижение выгорания и текучести. Стоимость и объём рассчитываются индивидуально под задачи каждой компании — отдельным договором на консалтинговое сопровождение.</p>
         <ul class="check-list b2b-list">
           <li>Дашборд благополучия для HR (без раскрытия персональных данных)</li>
           <li>Индекс эмоционального климата и риска выгорания по командам — анонимно и агрегированно</li>
@@ -458,8 +459,8 @@
         </ul>
       </div>
       <div class="b2b-cta">
-        <div class="b2b-price">от 1400 ₽<span>/сотрудник в мес</span></div>
-        <a href="#" class="btn btn-primary btn-lg" data-pay-stub>Запросить демо для компании</a>
+        <div class="b2b-price">Индивидуально<span>под задачи компании</span></div>
+        <a href="#" class="btn btn-primary btn-lg" data-pay-stub>Запросить расчёт и демо</a>
       </div>
     </div>
 
@@ -543,6 +544,13 @@
       <a href="#pricing" data-nav>Тарифы</a>
     </div>
     <div>
+      <h4>Документы</h4>
+      <a href="docs/politika-konfidencialnosti.html" target="_blank" rel="noopener">Политика конфиденциальности</a>
+      <a href="docs/polzovatelskoe-soglashenie.html" target="_blank" rel="noopener">Пользовательское соглашение</a>
+      <a href="docs/soglasie-pdn.html" target="_blank" rel="noopener">Согласие на обработку ПДн</a>
+      <a href="docs/politika-cookie.html" target="_blank" rel="noopener">Политика cookie</a>
+    </div>
+    <div>
       <h4>Контакты</h4>
       <p class="muted">По вопросам сотрудничества и B2B</p>
       <a href="#bot" data-nav>Написать в ассистенте</a>
@@ -553,6 +561,15 @@
     <span class="muted">Не заменяет очную медицинскую и психиатрическую помощь</span>
   </div>
 </footer>
+
+<!-- ======= COOKIE-БАННЕР ======= -->
+<div class="cookie-banner" id="cookieBanner" hidden>
+  <p>Мы используем файлы cookie для работы сайта и улучшения сервиса. Продолжая пользоваться сайтом, вы соглашаетесь с <a href="docs/politika-cookie.html" target="_blank" rel="noopener">Политикой в отношении файлов cookie</a>.</p>
+  <div class="cookie-actions">
+    <button class="cookie-decline" id="cookieDecline">Только необходимые</button>
+    <button class="cookie-accept" id="cookieAccept">Принять все</button>
+  </div>
+</div>
 
 <script src="dars-data.js"></script>
 <script src="app.js"></script>
