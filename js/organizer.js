@@ -234,6 +234,71 @@ function renderDiary() {
       <time>${dt}</time></div>`;
   }).join('');
 }
+/* ---- Экспорт/импорт дневника в JSON (данные остаются у пользователя) ---- */
+// Проверка одной записи из внешнего файла — это граница системы, доверять нельзя.
+function isValidEntry(e) {
+  if (!e || typeof e !== 'object') return false;
+  if (typeof e.date !== 'number' || !isFinite(e.date)) return false;
+  const hasArr = Array.isArray(e.emotions) && e.emotions.length &&
+    e.emotions.every(x => x && typeof x.name === 'string');
+  const hasLegacy = typeof e.emotion === 'string' && e.emotion;
+  return hasArr || hasLegacy;
+}
+function exportDiary() {
+  const entries = loadEntries();
+  if (!entries.length) { alert('Дневник пуст — экспортировать нечего.'); return; }
+  const payload = { app: 'matryoshka', kind: 'diary', version: 1, exportedAt: Date.now(), entries };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const d = new Date();
+  const stamp = d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  a.href = url;
+  a.download = `matryoshka-dnevnik-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+function importDiary(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); }
+    catch { alert('Не удалось прочитать файл: это не корректный JSON.'); return; }
+    // Принимаем и «обёртку» {entries:[...]}, и голый массив записей.
+    const incoming = Array.isArray(data) ? data : (data && Array.isArray(data.entries) ? data.entries : null);
+    if (!incoming) { alert('В файле нет записей дневника.'); return; }
+    const valid = incoming.filter(isValidEntry);
+    if (!valid.length) { alert('В файле не нашлось ни одной корректной записи дневника.'); return; }
+    const current = loadEntries();
+    const seen = new Set(current.map(e => e.date));
+    const added = valid.filter(e => !seen.has(e.date));
+    if (!added.length) { alert('Все записи из файла уже есть в дневнике — ничего не добавлено.'); return; }
+    const merged = current.concat(added).sort((a, b) => a.date - b.date);
+    saveEntries(merged);
+    renderDiary();
+    alert(`Импортировано новых записей: ${added.length}. Всего в дневнике: ${merged.length}.`);
+  };
+  reader.onerror = () => alert('Не удалось прочитать файл.');
+  reader.readAsText(file);
+}
+(function initDiaryIO() {
+  const exportBtn = document.getElementById('diaryExport');
+  const importBtn = document.getElementById('diaryImportBtn');
+  const importInput = document.getElementById('diaryImportInput');
+  if (exportBtn) exportBtn.addEventListener('click', exportDiary);
+  if (importBtn && importInput) {
+    importBtn.addEventListener('click', () => importInput.click());
+    importInput.addEventListener('change', () => {
+      const file = importInput.files && importInput.files[0];
+      if (file) importDiary(file);
+      importInput.value = '';  // чтобы повторный выбор того же файла тоже срабатывал
+    });
+  }
+})();
+
 // Переключатель периода аналитики
 (function initPeriodToggle() {
   const t = document.getElementById('periodToggle');

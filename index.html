@@ -337,6 +337,12 @@
         <div class="chart" id="chart"><p class="chart-empty">Пока нет записей. Отметьте своё состояние — и здесь появится статистика.</p></div>
         <div class="insights" id="insights"></div>
         <div class="log" id="diaryLog"></div>
+        <div class="diary-io">
+          <button class="diary-io__btn" id="diaryExport" type="button">⬇ Экспорт дневника</button>
+          <button class="diary-io__btn" id="diaryImportBtn" type="button">⬆ Импорт</button>
+          <input type="file" id="diaryImportInput" accept="application/json,.json" hidden />
+          <p class="diary-io__hint">Сохраните записи в файл на своё устройство или перенесите их между браузерами. Данные остаются только у вас.</p>
+        </div>
       </div>
     </div>
   </div>

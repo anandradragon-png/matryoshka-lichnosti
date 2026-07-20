@@ -37,6 +37,7 @@ async function boot() {
   // Заглушки браузерных API, которых нет в jsdom.
   window.HTMLElement.prototype.scrollIntoView = function () {};
   window.scrollTo = function () {};
+  window.alert = function () {};
   vi.resetModules();
   for (const m of MODULES) {
     await import(m);
@@ -119,5 +120,29 @@ describe('smoke', () => {
     document.getElementById('chatSend').click();
     await sleep(2600);
     expect(document.getElementById('chat').textContent).toMatch(/Рекомендую практику/);
+  });
+
+  test('импорт дневника: валидные записи добавляются, дубли и мусор отсеиваются', async () => {
+    // Одна запись уже в дневнике — она не должна задублироваться при импорте.
+    const existing = { emotions: [{ name: 'Радость', color: '#FBBF24' }], emotion: 'Радость', intensity: 5, date: 1000 };
+    localStorage.setItem('ml_diary', JSON.stringify([existing]));
+    const importInput = document.getElementById('diaryImportInput');
+    expect(importInput, 'нет input импорта').toBeTruthy();
+    const fileJson = JSON.stringify({
+      app: 'matryoshka', kind: 'diary', version: 1,
+      entries: [
+        existing, // дубль по date=1000 → игнор
+        { emotions: [{ name: 'Грусть', color: '#6366F1' }], emotion: 'Грусть', intensity: 7, date: 2000 }, // новая
+        { emotion: 'Гнев', intensity: 3, date: 3000 }, // старый формат — тоже валидна
+        { note: 'без даты и эмоций' }, // мусор → отсев
+      ],
+    });
+    const file = new File([fileJson], 'd.json', { type: 'application/json' });
+    Object.defineProperty(importInput, 'files', { value: [file], configurable: true });
+    importInput.dispatchEvent(new Event('change'));
+    await sleep(50); // FileReader асинхронный
+    const saved = JSON.parse(localStorage.getItem('ml_diary'));
+    expect(saved.length).toBe(3); // было 1 + 2 новых
+    expect(saved.map(e => e.date)).toEqual([1000, 2000, 3000]); // отсортировано по дате
   });
 });
