@@ -96,4 +96,28 @@ describe('smoke', () => {
     showBtn.click();
     expect(document.querySelector('#practiceModal.open')).toBeTruthy();
   });
+
+  test('ввод пользователя экранируется (защита от XSS)', () => {
+    document.getElementById('chatInput').value = '<img src=x onerror=alert(1)>';
+    document.getElementById('chatSend').click();
+    const userMsg = document.querySelector('#chat .msg.user');
+    expect(userMsg, 'нет сообщения пользователя').toBeTruthy();
+    // Тег НЕ должен стать реальным элементом — только текстом.
+    expect(document.querySelectorAll('#chat .msg.user img').length).toBe(0);
+    expect(userMsg.textContent).toBe('<img src=x onerror=alert(1)>');
+  });
+
+  test('расширенная кризисная детекция: «хочу умереть» → телефон доверия', async () => {
+    document.getElementById('chatInput').value = 'иногда хочется умереть';
+    document.getElementById('chatSend').click();
+    await sleep(1200);
+    expect(document.getElementById('chat').textContent).toMatch(/8-800-2000-122/);
+  });
+
+  test('расширенный словарь эмоций: «всё напрягает» → рекомендация практики', async () => {
+    document.getElementById('chatInput').value = 'меня всё напрягает';
+    document.getElementById('chatSend').click();
+    await sleep(2600);
+    expect(document.getElementById('chat').textContent).toMatch(/Рекомендую практику/);
+  });
 });
