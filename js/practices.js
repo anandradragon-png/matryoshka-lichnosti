@@ -1,3 +1,5 @@
+import { trapFocus } from './util.js';
+
 /* ================= ПРАКТИКИ =================
    Каждая практика: категория, иконка, название, краткое описание, время,
    пошаговая инструкция (steps) и совет, когда применять (when). */
@@ -154,13 +156,17 @@ CATS.forEach(c => {
   b.textContent = c[0].toUpperCase() + c.slice(1);
   b.onclick = () => filterPractices(c);
   b.dataset.cat = c;
+  b.setAttribute('aria-pressed', 'false');
   filtersWrap.appendChild(b);
 });
 
 export function filterPractices(cat) {
   activeCat = cat;
-  document.querySelectorAll('#practiceFilters button').forEach(b =>
-    b.classList.toggle('active', b.dataset.cat === cat));
+  document.querySelectorAll('#practiceFilters button').forEach(b => {
+    const on = b.dataset.cat === cat;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
   renderPractices();
 }
 function renderPractices() {
@@ -189,6 +195,7 @@ function renderPractices() {
 renderPractices();
 
 /* --- Модальное окно с пошаговой инструкцией практики --- */
+let releaseFocusTrap = null; // функция снятия ловушки фокуса текущей модалки
 export function openPractice(p) {
   if (!p) return;
   let modal = document.getElementById('practiceModal');
@@ -219,11 +226,13 @@ export function openPractice(p) {
   box.querySelector('.pm-diary').addEventListener('click', closePractice);
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
+  releaseFocusTrap = trapFocus(box); // ловушка фокуса + возврат при закрытии
 }
 function closePractice() {
   const modal = document.getElementById('practiceModal');
   if (modal) modal.classList.remove('open');
   document.body.style.overflow = '';
+  if (releaseFocusTrap) { releaseFocusTrap(); releaseFocusTrap = null; }
 }
 export function scrollToPractices(cat) {
   document.querySelector('#practices').scrollIntoView({ behavior:'smooth' });

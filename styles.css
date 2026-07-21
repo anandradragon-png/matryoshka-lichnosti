@@ -522,3 +522,21 @@ a{color:inherit;text-decoration:none}
 .adm-fb{background:var(--bg-soft);border-radius:10px;padding:9px 12px}
 .adm-fb-txt{display:block;font-size:13px;color:#33334d;margin-bottom:4px}
 .adm-fb time{font-size:11px;color:var(--muted)}
+
+/* На сенсорных устройствах мелкие «пилюли» трудно нажать пальцем — поднимаем
+   тач-таргеты до ~40px. Через pointer:coarse, чтобы не раздувать десктоп. */
+@media (pointer: coarse){
+  .emotion,.quick-replies button,.period-toggle button,.diary-io__btn,
+  .practice-filters button,.adm-chip,.adm-grant{min-height:40px}
+}
+
+/* Уважение к системной настройке «уменьшить движение»: гасим анимации и
+   плавную прокрутку для пользователей с вестибулярными расстройствами. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+}

@@ -1,5 +1,5 @@
 import { ML_KEYS } from './core.js';
-import { escapeHtml } from './util.js';
+import { escapeHtml, trapFocus } from './util.js';
 import { loadEntries, computeStreak, emotionColor, entryNames } from './organizer.js';
 
 /* ================= ЛИЧНЫЙ КАБИНЕТ (вход / регистрация) ================= */
@@ -62,18 +62,25 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
     return modal;
   }
+  let releaseTrap = null; // снятие ловушки фокуса текущей модалки
   function openModal(html) {
     ensureModal();
-    modal.querySelector('.am-box').innerHTML = html;
+    const box = modal.querySelector('.am-box');
+    const wasOpen = modal.classList.contains('open');
+    box.innerHTML = html;
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
-    const f = modal.querySelector('input');
+    const f = box.querySelector('input');
     if (f) setTimeout(() => f.focus(), 50);
+    // Ловушку и запоминание opener ставим только при первом открытии:
+    // .am-box переиспользуется, при смене экранов внутри трап уже активен.
+    if (!wasOpen) releaseTrap = trapFocus(box);
   }
   function closeModal() {
     if (!modal) return;
     modal.classList.remove('open');
     document.body.style.overflow = '';
+    if (releaseTrap) { releaseTrap(); releaseTrap = null; }
   }
 
   /* ---- Экран входа ---- */
