@@ -12,7 +12,7 @@ import {
    Пусто → работает демо-сценарий. После деплоя сюда вписывается адрес
    вида https://functions.yandexcloud.net/<function-id> и бот отвечает
    вживую через YandexGPT. Ключ к ИИ хранится ТОЛЬКО на сервере. */
-const BOT_API_URL = '';
+const BOT_API_URL = 'https://functions.yandexcloud.net/d4ea6e787931k2cbblqh';
 const chat = document.getElementById('chat');
 const quickReplies = document.getElementById('quickReplies');
 const chatInput = document.getElementById('chatInput');

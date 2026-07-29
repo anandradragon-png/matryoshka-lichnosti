@@ -84,18 +84,18 @@ describe('smoke', () => {
     expect(document.getElementById('chat').textContent).toMatch(/8-800-2000-122/);
   });
 
-  test('связка chat→practices: обычная эмоция → рекомендация практики', async () => {
+  test('живой ИИ-бот: ответ прослойки приходит и отображается в чате', async () => {
+    // BOT_API_URL задан (прод) → обычное сообщение идёт в живой YandexGPT
+    // через серверную прослойку. Сеть мокаем, проверяем отображение ответа.
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: true, json: async () => ({ reply: 'Слышу вас. Что вы сейчас чувствуете?' }) }))
+    );
     document.getElementById('chatInput').value = 'мне очень тревожно';
     document.getElementById('chatSend').click();
-    // Два последовательных botSay (~750мс каждый) до текста рекомендации.
-    await sleep(2600);
-    expect(document.getElementById('chat').textContent).toMatch(/Рекомендую практику/);
-    const showBtn = [...document.querySelectorAll('#quickReplies button')].find(b =>
-      /Показать практику/.test(b.textContent)
-    );
-    expect(showBtn, 'нет кнопки «Показать практику»').toBeTruthy();
-    showBtn.click();
-    expect(document.querySelector('#practiceModal.open')).toBeTruthy();
+    await sleep(300);
+    expect(document.getElementById('chat').textContent).toMatch(/Слышу вас/);
+    vi.unstubAllGlobals();
   });
 
   test('ввод пользователя экранируется (защита от XSS)', () => {
@@ -115,11 +115,17 @@ describe('smoke', () => {
     expect(document.getElementById('chat').textContent).toMatch(/8-800-2000-122/);
   });
 
-  test('расширенный словарь эмоций: «всё напрягает» → рекомендация практики', async () => {
-    document.getElementById('chatInput').value = 'меня всё напрягает';
+  test('живой ИИ-бот: HTML в ответе прослойки экранируется (защита от XSS)', async () => {
+    // Ответ сервера не доверяем: вставляется через escapeHtml, тег не должен ожить.
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: true, json: async () => ({ reply: '<img src=x onerror=alert(1)>' }) }))
+    );
+    document.getElementById('chatInput').value = 'привет';
     document.getElementById('chatSend').click();
-    await sleep(2600);
-    expect(document.getElementById('chat').textContent).toMatch(/Рекомендую практику/);
+    await sleep(300);
+    expect(document.querySelectorAll('#chat img').length).toBe(0);
+    vi.unstubAllGlobals();
   });
 
   test('импорт дневника: валидные записи добавляются, дубли и мусор отсеиваются', async () => {
