@@ -627,18 +627,6 @@ a{color:inherit;text-decoration:none}
   .practice-filters button,.adm-chip,.adm-grant{min-height:40px}
 }
 
-/* ===== Режим сайта: вкладки (роутер, js/router.js) =====
-   Класс .spa добавляется скриптом. Без него (нет JS / тесты / SEO) все секции
-   видны как обычная длинная страница — прогрессивное улучшение. */
-body.spa [data-view]{display:none}
-body.spa [data-view].view-on{display:block;animation:viewIn .28s ease}
-@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-/* Навигация-вкладки: активный пункт подчёркнут «языком» вкладки. */
-.main-nav a{position:relative;padding:8px 2px}
-.main-nav a.active{color:var(--purple-d)}
-.main-nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:3px;border-radius:3px 3px 0 0;background:var(--grad)}
-
 /* ===== Аккордеон (раскрывающиеся списки) ===== */
 .accordions{display:flex;flex-direction:column;gap:14px}
 .how-acc{max-width:860px;margin:0 auto}

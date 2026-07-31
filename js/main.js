@@ -15,4 +15,3 @@ import './lead.js';
 import './account.js';
 import './corp.js';
 import './cookie.js';
-import './router.js';
