@@ -11,5 +11,8 @@ import './organizer.js';
 import './chat.js';
 import './map.js';
 import './billing.js';
+import './lead.js';
 import './account.js';
+import './corp.js';
 import './cookie.js';
+import './router.js';

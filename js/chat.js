@@ -122,7 +122,7 @@ const flow = {
     setQuick([
       { label: 'Показать практику', action: () => { openPractice(rec); flow.after(); } },
       { label: 'Другие практики этого типа', action: () => { scrollToPractices(g.rec); flow.after(); } },
-      { label: 'Записать в дневник', action: () => { document.querySelector('#organizer').scrollIntoView({behavior:'smooth'}); flow.after(); } },
+      { label: 'Записать в дневник', action: () => { document.dispatchEvent(new CustomEvent('ml:goto', { detail: 'organizer' })); flow.after(); } },
     ]);
   },
   async techniques() {
@@ -134,8 +134,8 @@ const flow = {
     ]);
   },
   async pickTech(cat) {
-    await botSay('Отличный выбор! Открываю подборку практик направления «' + cat + '» ниже. 👇');
-    document.querySelector('#practices').scrollIntoView({ behavior: 'smooth' });
+    await botSay('Отличный выбор! Открываю вкладку практик направления «' + cat + '». 👇');
+    document.dispatchEvent(new CustomEvent('ml:goto', { detail: 'practices' }));
     filterPractices(cat);
     flow.after();
   },

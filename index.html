@@ -29,14 +29,13 @@
       <span class="logo-text">Матрёшка<br><b>Личности</b></span>
     </a>
     <nav class="main-nav" id="mainNav">
-      <a href="#concept" data-nav>О проекте</a>
-      <a href="#how" data-nav>Как это работает</a>
-      <a href="#bot" data-nav>Чат-бот</a>
-      <a href="#organizer" data-nav>Органайзер</a>
-      <a href="#map" data-nav>Карта личности</a>
-      <a href="#practices" data-nav>Практики</a>
-      <a href="#tests" data-nav>Тесты</a>
-      <a href="#pricing" data-nav>Тарифы</a>
+      <a href="#top" data-nav data-view-link="home">Главная</a>
+      <a href="#bot" data-nav data-view-link="bot">Чат-бот</a>
+      <a href="#organizer" data-nav data-view-link="organizer">Органайзер</a>
+      <a href="#map" data-nav data-view-link="map">Карта личности</a>
+      <a href="#practices" data-nav data-view-link="practices">Практики</a>
+      <a href="#tests" data-nav data-view-link="tests">Тесты</a>
+      <a href="#pricing" data-nav data-view-link="pricing">Тарифы</a>
     </nav>
     <div class="header-actions">
       <button class="btn btn-ghost" id="authBtn" type="button">Войти</button>
@@ -47,7 +46,7 @@
 </header>
 
 <!-- ======= HERO ======= -->
-<section class="hero">
+<section class="hero" id="hero">
   <div class="container hero-grid">
     <div class="hero-text">
       <span class="badge">Ежедневная эмоциональная гигиена · на основе эмотологии и КПТ</span>
@@ -127,9 +126,10 @@
       <p class="section-sub">В основе — эмотология, цикл когнитивно-поведенческой терапии, оригинальная научная работа — Монография «<b>От ноумена к феномену. Авторская типологическая модель архетипов «ДАРОВ» и её овеществление в цифровой экосистеме</b>», а также соционика.</p>
     </div>
 
-    <div class="how-grid">
-      <div class="how-text card">
-        <h3>Эмотология</h3>
+    <div class="accordions how-acc">
+      <details class="acc how-text card" open>
+        <summary><h3>Эмотология</h3></summary>
+        <div class="acc-body">
         <p>По Эрику Берну у человека есть три эго-состояния, и каждому свойственны свои эмоции:</p>
         <ul class="ego-list">
           <li><span class="ego child">Ребёнок</span> обида, тоска, беспомощность, одиночество</li>
@@ -141,10 +141,12 @@
         <div class="cycle-emotion">
           <span>Возникновение</span><i>→</i><span>Проживание</span><i>→</i><span>Завершение</span>
         </div>
-      </div>
+        </div>
+      </details>
 
-      <div class="how-text card">
-        <h3>Цикл КПТ</h3>
+      <details class="acc how-text card">
+        <summary><h3>Цикл КПТ</h3></summary>
+        <div class="acc-body">
         <p>Одно событие запускает цепочку. Разобрав её, можно изменить реакцию.</p>
         <div class="kpt-cycle">
           <div class="kpt-node" style="--i:0">Триггер</div>
@@ -156,14 +158,17 @@
           <div class="kpt-center">Вы</div>
         </div>
         <p class="kpt-example"><b>Пример.</b> Триггер: неудача на матче → Мысль: «так нечестно» → Чувство: злость → Тело: сжатые кулаки → Поведение: ушёл с площадки → Значение: «я неудачница».</p>
-      </div>
+        </div>
+      </details>
 
-      <div class="how-text card">
-        <h3>Соционика</h3>
+      <details class="acc how-text card">
+        <summary><h3>Соционика</h3></summary>
+        <div class="acc-body">
         <p>Соционика — это концепция типов личности и закономерностей взаимодействия между ними, разработанная в 1970-х годах литовской исследовательницей Аушрой Аугустинавичюте.</p>
         <p>Она основана на типологии психологических типов <b>Карла Юнга</b> и теории информационного метаболизма польского психиатра <b>Антона Кемпинского</b>.</p>
         <p>Понимание своего типа помогает лучше распознавать сильные стороны, реакции и способ обмена информацией с окружающими.</p>
-      </div>
+        </div>
+      </details>
     </div>
 
     <div class="journey">
@@ -473,7 +478,7 @@
       </div>
       <div class="b2b-cta">
         <div class="b2b-price">Индивидуально<span>под задачи компании</span></div>
-        <a href="#" class="btn btn-primary btn-lg" data-pay-stub>Запросить расчёт и демо</a>
+        <a href="#" class="btn btn-primary btn-lg" data-lead>Запросить расчёт и демо</a>
       </div>
     </div>
 
@@ -498,7 +503,7 @@
       <article class="card price-card featured">
         <div class="psy-badge">Популярно</div>
         <h3>Стандартная</h3>
-        <div class="price" data-month="490 ₽<span>/мес</span>" data-year="3 490 ₽<span>/год</span>">490 ₽<span>/мес</span></div>
+        <div class="price" data-month="490 ₽<span>/мес</span>" data-year="4 116 ₽<span>/год</span>">490 ₽<span>/мес</span></div>
         <ul class="check-list">
           <li>Аналитика связей и инсайты</li>
           <li>Полная Карта личности (Дар + Поле)</li>
@@ -508,7 +513,7 @@
       </article>
       <article class="card price-card">
         <h3>Премиум</h3>
-        <div class="price">790 ₽<span>/мес</span></div>
+        <div class="price" data-month="790 ₽<span>/мес</span>" data-year="6 636 ₽<span>/год</span>">790 ₽<span>/мес</span></div>
         <ul class="check-list">
           <li>Всё из «Стандартной»</li>
           <li>Полная типология: соционика и тесты</li>
@@ -521,7 +526,7 @@
 </section>
 
 <!-- ======= PARTNERS ======= -->
-<section class="section partners">
+<section class="section partners" id="partners">
   <div class="container">
     <p class="partners-title">Экосистема и партнёры</p>
     <div class="partner-logos">
@@ -531,7 +536,7 @@
 </section>
 
 <!-- ======= CTA ======= -->
-<section class="section cta-section">
+<section class="section cta-section" id="cta">
   <div class="container cta-inner">
     <h2>Позаботьтесь о себе уже сегодня</h2>
     <p>Начните с простого диалога — это бесплатно и займёт пару минут.</p>
@@ -566,8 +571,15 @@
     <div>
       <h4>Контакты</h4>
       <p class="muted">По вопросам сотрудничества и B2B</p>
+      <a href="mailto:alicat_18@mail.ru">alicat_18@mail.ru</a>
       <a href="#bot" data-nav>Написать в ассистенте</a>
     </div>
+  </div>
+  <div class="container footer-requisites">
+    <p>
+      Оператор сервиса: <b>ООО «ЮПЛАБ»</b> · ОГРН 1262300029837 · ИНН 2311393968 · КПП 231101001 ·
+      350028, Краснодарский край, г. Краснодар, ул. Черкасская, д. 58/2, кв. 36 · e-mail alicat_18@mail.ru
+    </p>
   </div>
   <div class="container footer-bottom">
     <span>© 2026 Матрёшка Личности · Прототип</span>

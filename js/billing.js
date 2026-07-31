@@ -2,11 +2,13 @@
 (function billing() {
   const toggle = document.getElementById('billingToggle');
   if (!toggle) return;
-  const priceEl = document.querySelector('.price-card.featured .price');
+  // Все платные карточки с ценой мес/год, а не только «Стандартная».
+  const priceEls = [...document.querySelectorAll('.price-card .price[data-month]')];
   toggle.querySelectorAll('button').forEach(b => b.onclick = () => {
     toggle.querySelectorAll('button').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
-    priceEl.innerHTML = b.dataset.plan === 'year' ? priceEl.dataset.year : priceEl.dataset.month;
+    const year = b.dataset.plan === 'year';
+    priceEls.forEach(el => (el.innerHTML = year ? el.dataset.year : el.dataset.month));
   });
 })();
 

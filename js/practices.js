@@ -235,6 +235,6 @@ function closePractice() {
   if (releaseFocusTrap) { releaseFocusTrap(); releaseFocusTrap = null; }
 }
 export function scrollToPractices(cat) {
-  document.querySelector('#practices').scrollIntoView({ behavior:'smooth' });
+  document.dispatchEvent(new CustomEvent('ml:goto', { detail: 'practices' }));
   if (cat) filterPractices(cat);
 }

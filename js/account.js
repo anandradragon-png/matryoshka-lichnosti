@@ -189,6 +189,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
         <button class="btn btn-outline" data-go="#bot">💬 Ассистент</button>
       </div>
       ${isAdmin(u) ? '<button class="btn btn-lg am-admin-btn" id="toAdmin">🛠 Панель разработчика</button>' : ''}
+      <button class="btn btn-outline am-corp-btn" id="toCorp">🏢 Кабинет компании (HR)</button>
       <button class="btn btn-outline am-fb-btn" id="toFeedback">✍️ Оставить отзыв</button>
       <button class="am-logout" id="logoutBtn">Выйти из кабинета</button>
     `);
@@ -200,6 +201,10 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
     });
     const adminBtn = modal.querySelector('#toAdmin');
     if (adminBtn) adminBtn.onclick = () => showAdminPanel();
+    modal.querySelector('#toCorp').onclick = () => {
+      closeModal();
+      document.dispatchEvent(new CustomEvent('ml:corp-open'));
+    };
     modal.querySelector('#toFeedback').onclick = () => showFeedbackForm();
     modal.querySelector('#logoutBtn').onclick = () => {
       setSession('');

@@ -291,7 +291,104 @@ a{color:inherit;text-decoration:none}
 .site-footer a{display:block;color:#a9a4c9;margin-bottom:8px;font-size:14px}
 .site-footer a:hover{color:#fff}
 .footer-grid .muted{color:#8c87ab;font-size:14px;margin-top:12px}
-.footer-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:36px;padding-top:22px;border-top:1px solid rgba(255,255,255,.1);font-size:13px;color:#8c87ab}
+.footer-requisites{margin-top:34px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1)}
+.footer-requisites p{margin:0;font-size:12.5px;line-height:1.6;color:#8c87ab}
+.footer-requisites b{color:#cfcbe6}
+.footer-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);font-size:13px;color:#8c87ab}
+
+/* ===== Модалка заявки B2B (lead-) ===== */
+.lead-modal{position:fixed;inset:0;z-index:1100;display:none;align-items:center;justify-content:center;padding:20px}
+.lead-modal.open{display:flex}
+.lead-backdrop{position:absolute;inset:0;background:rgba(31,34,51,.55);backdrop-filter:blur(3px)}
+.lead-box{position:relative;background:#fff;border-radius:22px;max-width:480px;width:100%;max-height:90vh;overflow:auto;
+  padding:28px;box-shadow:0 24px 70px rgba(31,34,51,.35);border-top:5px solid var(--purple);animation:pmIn .25s ease}
+.lead-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border:0;border-radius:50%;
+  background:var(--bg);color:var(--ink);font-size:18px;line-height:1;cursor:pointer;transition:.2s}
+.lead-close:hover{background:#ECE9F5}
+.lead-box h3{font-size:21px;margin-bottom:6px;padding-right:30px}
+.lead-sub{font-size:14px;margin-bottom:18px}
+.lead-form{display:flex;flex-direction:column;gap:12px}
+.lead-form label{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:700;color:var(--ink)}
+.lead-form label span{color:var(--purple)}
+.lead-form input,.lead-form textarea{font:inherit;font-weight:400;padding:11px 13px;border:1.5px solid #E3E0EE;border-radius:12px;background:#fff;color:var(--ink);transition:border-color .15s}
+.lead-form input:focus,.lead-form textarea:focus{outline:none;border-color:var(--purple)}
+.lead-form textarea{resize:vertical;min-height:66px}
+.lead-err{margin:0;color:#c0392b;font-size:13px;font-weight:600}
+.lead-submit{margin-top:4px}
+.lead-note{font-size:12px;text-align:center;margin:2px 0 0}
+
+/* Корпоративный кабинет (HR / компания) */
+.corp-modal{position:fixed;inset:0;z-index:1150;display:none;align-items:center;justify-content:center;padding:20px}
+.corp-modal.open{display:flex}
+.corp-backdrop{position:absolute;inset:0;background:rgba(31,34,51,.55);backdrop-filter:blur(3px)}
+.corp-box{position:relative;background:#fff;border-radius:22px;max-width:680px;width:100%;max-height:90vh;overflow:auto;
+  padding:26px 28px;box-shadow:0 24px 70px rgba(31,34,51,.35);border-top:5px solid var(--purple);animation:pmIn .25s ease}
+.corp-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border:0;border-radius:50%;
+  background:var(--bg);color:var(--ink);font-size:18px;line-height:1;cursor:pointer;transition:.2s;z-index:2}
+.corp-close:hover{background:#ECE9F5}
+.corp-title{font-size:21px;margin:0 0 4px;padding-right:30px}
+.corp-sub{font-size:13.5px;color:var(--muted);margin:0 0 16px}
+.corp-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-right:30px}
+.corp-logo{width:46px;height:46px;border-radius:14px;background:var(--grad);display:grid;place-items:center;font-size:24px;flex:none}
+.corp-head .corp-title,.corp-head .corp-sub{margin:0}
+.corp-switch{margin-left:auto;border:1px solid var(--line);background:var(--bg-soft);font:inherit;font-size:12.5px;font-weight:700;
+  color:var(--purple);padding:8px 12px;border-radius:999px;cursor:pointer;transition:.15s;white-space:nowrap}
+.corp-switch:hover{background:var(--purple);color:#fff;border-color:transparent}
+.corp-tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.corp-tab{border:0;background:none;font:inherit;font-size:14px;font-weight:700;color:var(--muted);padding:9px 12px;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:.15s}
+.corp-tab:hover{color:var(--ink)}
+.corp-tab.on{color:var(--purple);border-bottom-color:var(--purple)}
+.corp-actions-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.btn-sm{padding:8px 14px;font-size:13px}
+.corp-empty{padding:22px 0;text-align:center}
+.corp-tree,.corp-subtree{list-style:none;margin:0;padding:0}
+.corp-subtree{margin:6px 0 6px 18px;padding-left:14px;border-left:2px dashed var(--line)}
+.corp-unit{margin:8px 0}
+.corp-unit-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:9px 12px}
+.corp-unit-name{font-weight:700;font-size:14.5px;color:var(--ink)}
+.corp-count{font-style:normal;font-size:12px;color:var(--muted);font-weight:600;margin-left:4px}
+.corp-unit-btns{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap}
+.corp-ico{border:1px solid var(--line);background:#fff;font:inherit;font-size:12px;font-weight:600;color:var(--purple);padding:5px 9px;border-radius:8px;cursor:pointer;transition:.15s}
+.corp-ico:hover{background:var(--purple);color:#fff;border-color:transparent}
+.corp-ico.danger{color:#c0392b}
+.corp-ico.danger:hover{background:#c0392b;color:#fff}
+.corp-roster{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 0 10px}
+.corp-emp{font-size:12.5px;background:#F3E9FF;color:var(--purple-d);border-radius:999px;padding:4px 10px}
+.corp-note{background:#fff4e0;border:1px solid #f0d090;border-radius:12px;padding:12px 14px;font-size:12.5px;color:#6b5a2a;margin-top:16px;line-height:1.5}
+.corp-textarea{width:100%;font:inherit;font-size:13.5px;padding:12px;border:1.5px solid #E3E0EE;border-radius:12px;resize:vertical;min-height:150px;margin-bottom:8px}
+.corp-textarea:focus{outline:none;border-color:var(--purple)}
+.corp-err{color:#c0392b;font-size:13px;font-weight:600;margin:0 0 8px}
+.corp-metrics{display:flex;flex-direction:column;gap:12px}
+.corp-metric{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:#fff}
+.corp-metric.locked{background:var(--bg-soft)}
+.corp-metric-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.corp-metric-head b{font-size:15px}
+.corp-badge{font-size:11.5px;font-weight:700;color:var(--muted);background:var(--bg);border-radius:999px;padding:3px 10px}
+.corp-badge.ok{color:#1f7a4d;background:#e3f6ea}
+.corp-gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.corp-gauge{display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--bg-soft);border-radius:12px;padding:10px 6px}
+.corp-gauge-val{font-size:20px;font-weight:800;color:var(--purple-d);line-height:1.1}
+.corp-gauge-lbl{font-size:10.5px;color:var(--muted);margin-top:4px}
+.corp-gauge-val.good{color:#1f7a4d}
+.corp-gauge-val.bad{color:#c0392b}
+.burn-low{color:#1f7a4d}
+.burn-mid{color:#c98a00}
+.burn-high{color:#c0392b}
+.corp-emos{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.corp-emo-chip{font-size:12px;background:#F3E9FF;color:var(--purple-d);border-radius:999px;padding:4px 10px}
+.corp-roles{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.corp-role{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:16px 18px;cursor:pointer;transition:.15s;font:inherit}
+.corp-role:hover{border-color:var(--purple);background:var(--bg-soft)}
+.corp-role.primary{border-color:var(--purple)}
+.corp-role b{font-size:15.5px;color:var(--ink)}
+.corp-role .muted{font-size:12.5px}
+.corp-role-emo{font-size:26px}
+.corp-join-form{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.corp-join-form label{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:700}
+.corp-join-form input{font:inherit;font-weight:400;padding:11px 13px;border:1.5px solid #E3E0EE;border-radius:12px}
+.corp-join-form input:focus{outline:none;border-color:var(--purple)}
+.am-corp-btn{width:100%;margin-top:8px}
+@media(max-width:560px){.corp-gauges{grid-template-columns:repeat(2,1fr)}.corp-unit-btns{margin-left:0}}
 
 /* Streak / retention */
 .streak-bar{display:flex;align-items:center;gap:26px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px 24px;box-shadow:var(--shadow);margin-bottom:24px}
@@ -529,6 +626,33 @@ a{color:inherit;text-decoration:none}
   .emotion,.quick-replies button,.period-toggle button,.diary-io__btn,
   .practice-filters button,.adm-chip,.adm-grant{min-height:40px}
 }
+
+/* ===== Режим сайта: вкладки (роутер, js/router.js) =====
+   Класс .spa добавляется скриптом. Без него (нет JS / тесты / SEO) все секции
+   видны как обычная длинная страница — прогрессивное улучшение. */
+body.spa [data-view]{display:none}
+body.spa [data-view].view-on{display:block;animation:viewIn .28s ease}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Навигация-вкладки: активный пункт подчёркнут «языком» вкладки. */
+.main-nav a{position:relative;padding:8px 2px}
+.main-nav a.active{color:var(--purple-d)}
+.main-nav a.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:3px;border-radius:3px 3px 0 0;background:var(--grad)}
+
+/* ===== Аккордеон (раскрывающиеся списки) ===== */
+.accordions{display:flex;flex-direction:column;gap:14px}
+.how-acc{max-width:860px;margin:0 auto}
+.acc{padding:0;overflow:hidden}
+.acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:20px 24px;font-weight:800;transition:background .15s}
+.acc>summary::-webkit-details-marker{display:none}
+.acc>summary::after{content:"⌄";margin-left:auto;font-size:22px;line-height:1;color:var(--purple);transition:transform .2s}
+.acc[open]>summary::after{transform:rotate(180deg)}
+.acc>summary:hover{background:var(--bg-soft)}
+.acc>summary h3{margin:0;font-size:20px}
+.acc>summary::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--grad);flex:0 0 8px}
+.acc .acc-body{padding:0 24px 22px}
+.acc[open]>summary{border-bottom:1px solid var(--line)}
+.acc[open] .acc-body{padding-top:18px}
 
 /* Уважение к системной настройке «уменьшить движение»: гасим анимации и
    плавную прокрутку для пользователей с вестибулярными расстройствами. */
