@@ -23,15 +23,25 @@ const chatHistory = [];
 
 /* Запрос к живому ИИ через серверную прослойку */
 async function callBotAPI(text) {
-  const res = await fetch(BOT_API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: text, history: chatHistory.slice(-8) }),
-  });
-  if (!res.ok) throw new Error('bot api ' + res.status);
-  const data = await res.json();
-  if (!data.reply) throw new Error(data.error || 'no reply');
-  return data.reply;
+  // Таймаут запроса: серверная функция живёт до 90 с (RAG + поллинг). Если связь
+  // зависла — прерываем, чтобы индикатор «печатает…» не висел вечно, а показали
+  // мягкую ошибку. AbortController поддерживается всеми целевыми браузерами.
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 90000);
+  try {
+    const res = await fetch(BOT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, history: chatHistory.slice(-8) }),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) throw new Error('bot api ' + res.status);
+    const data = await res.json();
+    if (!data.reply) throw new Error(data.error || 'no reply');
+    return data.reply;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /* Ответ живого ИИ с индикатором «печатает…» */

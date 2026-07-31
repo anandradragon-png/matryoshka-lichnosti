@@ -1,5 +1,5 @@
 import { ML_KEYS } from './core.js';
-import { escapeHtml } from './util.js';
+import { escapeHtml, safeParse } from './util.js';
 
 /* ================= ОРГАНАЙЗЕР ЭМОЦИЙ ================= */
 /* Колесо эмоций Роберта Плутчика: 8 спектров, в каждом 3 эмоции по возрастанию
@@ -86,7 +86,7 @@ sleep.addEventListener('input', () => sleepVal.textContent = sleep.value);
 energy.addEventListener('input', () => energyVal.textContent = energy.value);
 
 const STORE_KEY = ML_KEYS.diary;
-export const loadEntries = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+export const loadEntries = () => safeParse(localStorage.getItem(STORE_KEY), []);
 const saveEntries = e => localStorage.setItem(STORE_KEY, JSON.stringify(e));
 // Список эмоций записи (совместимость: старый формат — одна эмоция, новый — массив)
 const entryEmotions = e => (Array.isArray(e.emotions) && e.emotions.length)

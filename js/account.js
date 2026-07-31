@@ -1,5 +1,5 @@
 import { ML_KEYS } from './core.js';
-import { escapeHtml, trapFocus } from './util.js';
+import { escapeHtml, trapFocus, safeParse } from './util.js';
 import { loadEntries, computeStreak, emotionColor, entryNames } from './organizer.js';
 
 /* ================= ЛИЧНЫЙ КАБИНЕТ (вход / регистрация) ================= */
@@ -10,7 +10,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
   const PROMO_KEY = ML_KEYS.promos;
   const FEEDBACK_KEY = ML_KEYS.feedback;
 
-  const loadUsers = () => JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+  const loadUsers = () => safeParse(localStorage.getItem(USERS_KEY), []);
   const saveUsers = u => localStorage.setItem(USERS_KEY, JSON.stringify(u));
   const getSession = () => localStorage.getItem(SESSION_KEY) || '';
   const setSession = login => login ? localStorage.setItem(SESSION_KEY, login) : localStorage.removeItem(SESSION_KEY);
@@ -18,9 +18,9 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
   const currentUser = () => findUser(getSession());
   const isAdmin = u => u && u.role === 'admin';
 
-  const loadPromos = () => JSON.parse(localStorage.getItem(PROMO_KEY) || '[]');
+  const loadPromos = () => safeParse(localStorage.getItem(PROMO_KEY), []);
   const savePromos = p => localStorage.setItem(PROMO_KEY, JSON.stringify(p));
-  const loadFeedback = () => JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '[]');
+  const loadFeedback = () => safeParse(localStorage.getItem(FEEDBACK_KEY), []);
   const saveFeedback = f => localStorage.setItem(FEEDBACK_KEY, JSON.stringify(f));
 
   // Стартовые аккаунты: demo (гость) + два администратора-разработчика (Светлана и Альбина).
@@ -89,7 +89,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
       <button class="am-close" aria-label="Закрыть">×</button>
       <h3 class="am-title">Вход в личный кабинет</h3>
       <p class="am-sub">Введите логин и пароль, которые вы указали при регистрации.</p>
-      ${msg ? `<div class="am-error">${msg}</div>` : ''}
+      ${msg ? `<div class="am-error">${escapeHtml(msg)}</div>` : ''}
       <form class="am-form" id="loginForm">
         <label>Логин или e-mail<input type="text" name="login" autocomplete="username" required></label>
         <label>Пароль<input type="password" name="pass" autocomplete="current-password" required></label>
@@ -118,7 +118,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
       <button class="am-close" aria-label="Закрыть">×</button>
       <h3 class="am-title">Регистрация</h3>
       <p class="am-sub">Придумайте логин и пароль — они понадобятся для входа в кабинет.</p>
-      ${msg ? `<div class="am-error">${msg}</div>` : ''}
+      ${msg ? `<div class="am-error">${escapeHtml(msg)}</div>` : ''}
       <form class="am-form" id="regForm">
         <label>Как к вам обращаться<input type="text" name="name" autocomplete="name" required></label>
         <label>Логин или e-mail<input type="text" name="login" autocomplete="username" required></label>
@@ -220,7 +220,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
       <button class="am-close" aria-label="Закрыть">×</button>
       <h3 class="am-title">Обратная связь</h3>
       <p class="am-sub">Расскажите, что понравилось или что улучшить — это увидят разработчики.</p>
-      ${msg ? `<div class="am-demo">${msg}</div>` : ''}
+      ${msg ? `<div class="am-demo">${escapeHtml(msg)}</div>` : ''}
       <form class="am-form" id="fbForm">
         <label>Ваш отзыв<textarea name="text" rows="4" required placeholder="Ваши мысли, идеи, замечания…"></textarea></label>
         <button type="submit" class="btn btn-primary btn-lg am-submit">Отправить</button>

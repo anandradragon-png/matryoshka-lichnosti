@@ -13,12 +13,12 @@
 
    Данные пока в localStorage (форма 1:1 ляжет в будущий PostgreSQL). */
 import { ML_KEYS } from './core.js';
-import { escapeHtml } from './util.js';
+import { escapeHtml, safeParse } from './util.js';
 
 const THRESHOLD = 5; // порог анонимности: минимум участников в узле, чтобы показать статистику
 
 /* ---------- Хранилище ---------- */
-const loadCompanies = () => JSON.parse(localStorage.getItem(ML_KEYS.companies) || '[]');
+const loadCompanies = () => safeParse(localStorage.getItem(ML_KEYS.companies), []);
 const saveCompanies = c => localStorage.setItem(ML_KEYS.companies, JSON.stringify(c));
 const sessionLogin = () => localStorage.getItem(ML_KEYS.session) || '';
 const rid = p => p + Math.random().toString(36).slice(2, 9);
