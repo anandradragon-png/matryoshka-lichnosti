@@ -31,8 +31,32 @@ const EMOTIONS = PLUTCHIK.flatMap(sp =>
 );
 export const emotionColor = name => (EMOTIONS.find(e => e.name === name) || {}).color || '#8B5CF6';
 
+// Индекс спектра эмоции в круге Плутчика (0..7)
+const spectrumIndex = name => PLUTCHIK.findIndex(sp => sp.spectrum === name);
+/* Полная таблица составных эмоций (диад) Плутчика по паре спектров.
+   Ключ — «min-max» индексов спектров. Соседние (дистанция 1) — первичные диады,
+   через один (2) — вторичные, через два (3) — третичные. Противоположные
+   (дистанция 4) единой эмоции не образуют → в таблице отсутствуют (конфликт). */
+const DYAD_MAP = {
+  '0-1': 'Любовь', '1-2': 'Покорность', '2-3': 'Трепет', '3-4': 'Неодобрение',
+  '4-5': 'Раскаяние', '5-6': 'Презрение', '6-7': 'Агрессия', '0-7': 'Оптимизм',
+  '0-2': 'Вина', '1-3': 'Любопытство', '2-4': 'Отчаяние', '3-5': 'Неверие',
+  '4-6': 'Зависть', '5-7': 'Цинизм', '0-6': 'Гордость', '1-7': 'Надежда',
+  '0-3': 'Ликование', '1-4': 'Сентиментальность', '2-5': 'Стыд', '3-6': 'Возмущение',
+  '4-7': 'Пессимизм', '0-5': 'Болезненность', '1-6': 'Доминирование', '2-7': 'Тревога',
+};
+// По двум выбранным эмоциям возвращает единую составную эмоцию (диаду) или null.
+function compoundEmotion(sel) {
+  if (sel.length !== 2) return null;
+  const i = spectrumIndex(sel[0].spectrum), j = spectrumIndex(sel[1].spectrum);
+  if (i < 0 || j < 0 || i === j) return null;   // одна группа — диады нет
+  return DYAD_MAP[Math.min(i, j) + '-' + Math.max(i, j)] || null;  // противоположные → null
+}
+
 const emotionsWrap = document.getElementById('emotions');
-let selectedEmotions = [];  // мультивыбор «настроение дня»
+const emotionResult = document.getElementById('emotionResult');
+const MAX_EMOTIONS = 2;      // не более двух эмоций за раз → одна составная (как у Плутчика)
+let selectedEmotions = [];   // выбор «настроение дня»
 PLUTCHIK.forEach(sp => {
   const group = document.createElement('div');
   group.className = 'emotion-group';
@@ -46,12 +70,38 @@ PLUTCHIK.forEach(sp => {
     b.onclick = () => {
       const idx = selectedEmotions.findIndex(x => x.name === name);
       if (idx >= 0) { selectedEmotions.splice(idx, 1); b.classList.remove('sel'); }
-      else { selectedEmotions.push({ name, color: sp.color, spectrum: sp.spectrum }); b.classList.add('sel'); }
+      else {
+        if (selectedEmotions.length >= MAX_EMOTIONS) {
+          alert('Можно выбрать не более двух эмоций за раз — из них рождается одна составная эмоция, как у Плутчика.');
+          return;
+        }
+        selectedEmotions.push({ name, color: sp.color, spectrum: sp.spectrum }); b.classList.add('sel');
+      }
+      renderEmotionResult();
     };
     group.appendChild(b);
   });
   emotionsWrap.appendChild(group);
 });
+
+// Живой вывод рождающейся составной эмоции под списком выбора
+function renderEmotionResult() {
+  if (!emotionResult) return;
+  if (selectedEmotions.length < 2) { emotionResult.hidden = true; emotionResult.innerHTML = ''; return; }
+  const [a, b] = selectedEmotions;
+  const comp = compoundEmotion(selectedEmotions);
+  emotionResult.hidden = false;
+  if (comp) {
+    emotionResult.className = 'emotion-result has-compound';
+    emotionResult.innerHTML = `Рождается новая эмоция: <b>${comp}</b> <span class="er-src">(${a.name} + ${b.name})</span>`;
+  } else if (a.spectrum === b.spectrum) {
+    emotionResult.className = 'emotion-result';
+    emotionResult.innerHTML = `<span class="er-src">${a.name} и ${b.name} — одна группа эмоций, разной интенсивности.</span>`;
+  } else {
+    emotionResult.className = 'emotion-result';
+    emotionResult.innerHTML = `<span class="er-src">${a.name} и ${b.name} — противоположные эмоции: в одну не сливаются.</span>`;
+  }
+}
 
 // Легенда колеса Плутчика (справочный блок)
 (function renderPlutchik() {
@@ -102,11 +152,18 @@ function periodEntries(entries) {
   return entries.filter(e => e.date >= from);
 }
 
+const MAX_ENTRIES_PER_DAY = 3;   // до 3 отметок настроения в день
 document.getElementById('saveEntry').addEventListener('click', () => {
   if (!selectedEmotions.length) { alert('Выберите хотя бы одну эмоцию, чтобы сохранить настроение дня.'); return; }
   const entries = loadEntries();
+  const today = dayKey(Date.now());
+  if (entries.filter(e => dayKey(e.date) === today).length >= MAX_ENTRIES_PER_DAY) {
+    alert('Сегодня уже сохранено 3 отметки настроения — это максимум за день. Вернитесь к отметке завтра.');
+    return;
+  }
   entries.push({
     emotions: selectedEmotions.map(e => ({ name: e.name, color: e.color, spectrum: e.spectrum })),
+    compound: compoundEmotion(selectedEmotions),   // единая составная эмоция (диада) или null
     emotion: selectedEmotions[0].name,   // для совместимости со старым форматом
     color: selectedEmotions[0].color,
     intensity: +intensity.value,
@@ -119,6 +176,7 @@ document.getElementById('saveEntry').addEventListener('click', () => {
   document.getElementById('diaryNote').value = '';
   document.querySelectorAll('.emotion').forEach(x => x.classList.remove('sel'));
   selectedEmotions = [];
+  renderEmotionResult();
   intensity.value = 5; intensityVal.textContent = '5';
   renderDiary();
   celebrate();
@@ -228,8 +286,9 @@ function renderDiary() {
     const meta = e.sleep != null ? ` <span class="log-meta">😴${e.sleep} ⚡${e.energy}</span>` : '';
     const tags = entryEmotions(e).map(x =>
       `<span class="tag" style="--e:${x.color}">${x.name}</span>`).join('');
+    const comp = e.compound ? `<span class="tag tag-comp">→ ${escapeHtml(String(e.compound))}</span>` : '';
     return `<div class="log-item" style="--e:${entryEmotions(e)[0]?.color || '#8B5CF6'}">
-      <span class="tags">${tags} <b class="tag-int">· ${e.intensity || 5}</b></span>
+      <span class="tags">${tags}${comp} <b class="tag-int">· ${e.intensity || 5}</b></span>
       <span class="txt">${e.note ? escapeHtml(e.note) : '<i>без заметки</i>'}${meta}</span>
       <time>${dt}</time></div>`;
   }).join('');

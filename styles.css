@@ -34,9 +34,11 @@ a{color:inherit;text-decoration:none}
 .logo-mark{width:38px;height:44px;border-radius:12px 12px 16px 16px;background:var(--grad);display:grid;place-items:center;position:relative;box-shadow:var(--shadow)}
 .doll{width:16px;height:22px;background:#fff;border-radius:8px 8px 10px 10px;position:relative}
 .doll::after{content:"";position:absolute;left:50%;top:5px;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--pink)}
-.main-nav{display:flex;gap:22px;margin-left:auto;font-weight:600;font-size:14.5px}
-.main-nav a{color:var(--muted);transition:.2s}
+.main-nav{display:flex;gap:16px;margin-left:auto;font-weight:600;font-size:14px}
+.main-nav a{color:var(--muted);transition:.2s;white-space:nowrap}
 .main-nav a:hover,.main-nav a.active{color:var(--purple-d)}
+.main-nav a.nav-corp{color:var(--purple-d);font-weight:700;border:1.5px solid color-mix(in srgb,var(--purple) 45%,#fff);border-radius:999px;padding:5px 12px;background:color-mix(in srgb,var(--purple) 7%,#fff)}
+.main-nav a.nav-corp:hover,.main-nav a.nav-corp.active{background:var(--grad);color:#fff;border-color:transparent}
 .header-actions{display:flex;gap:10px}
 .burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
 .burger span{width:24px;height:2px;background:var(--ink);border-radius:2px;transition:.2s}
@@ -164,7 +166,7 @@ a{color:inherit;text-decoration:none}
 .organizer-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .organizer-input h3,.organizer-analytics h3{margin-bottom:16px}
 .emotions-hint{font-size:13px;margin-bottom:12px}
-.emotions{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:260px;overflow-y:auto;padding-right:4px}
+.emotions{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
 .emotion-group{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .emotion-group-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--e);min-width:78px}
 .emotion{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-weight:600;font-size:12.5px;font-family:inherit;transition:.15s;display:flex;align-items:center;gap:6px}
@@ -174,6 +176,12 @@ a{color:inherit;text-decoration:none}
 .emotion.lvl2 .dot{opacity:.8}
 .emotion.lvl3 .dot{opacity:1;box-shadow:0 0 0 3px color-mix(in srgb,var(--e) 25%,transparent)}
 .emotion.sel .dot{background:#fff}
+.emotion-result{margin:0 0 16px;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:700;
+  background:color-mix(in srgb,var(--purple) 8%,#fff);border:1px solid color-mix(in srgb,var(--purple) 25%,#fff);color:var(--purple-d)}
+.emotion-result.has-compound{background:var(--grad);color:#fff;border-color:transparent}
+.emotion-result b{font-weight:800}
+.emotion-result .er-src{font-weight:600;opacity:.85;font-size:12.5px}
+.log-item .tag-comp{background:var(--grad)}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;font-weight:700;font-size:14px}
 .field textarea{border:1px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:14px;resize:vertical;outline:none}
 .field textarea:focus{border-color:var(--purple)}
@@ -476,17 +484,25 @@ a{color:inherit;text-decoration:none}
   font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .pricing-divider::before,.pricing-divider::after{content:"";flex:1;height:1px;background:var(--line)}
 
+/* Гусеница + карточка «Матрёшка для компании» справа */
+.journey-corp{display:grid;grid-template-columns:1.6fr 1fr;gap:32px;align-items:start;margin-top:40px}
+.journey-corp .journey{margin-top:0}
+.company-card{grid-template-columns:1fr;margin:0;position:sticky;top:96px}
+
 /* Journey — ссылка и кнопка */
 .journey-link{display:inline-block;margin-top:12px;font-weight:800;font-size:14px;color:var(--purple);text-decoration:none}
 .journey-link:hover{text-decoration:underline}
 .journey-fb-btn{margin-top:14px}
 
 /* Responsive */
-@media(max-width:960px){
+@media(max-width:1200px){
   .main-nav,.header-actions{display:none}
   .main-nav.open{display:flex;position:absolute;top:72px;left:0;right:0;background:#fff;flex-direction:column;padding:18px 6%;gap:14px;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
   .burger{display:flex;margin-left:auto}
-  .hero-grid,.how-grid,.organizer-grid,.phone-wrap,.map-grid,.b2b{grid-template-columns:1fr}
+}
+@media(max-width:960px){
+  .hero-grid,.how-grid,.organizer-grid,.phone-wrap,.map-grid,.b2b,.journey-corp{grid-template-columns:1fr}
+  .company-card{position:static}
   .services,.practices,.psy,.pricing,.value,.tests,.how-grid{grid-template-columns:1fr 1fr}
   .streak-week{width:100%;margin-left:0;justify-content:space-between}
   .hero-visual{order:-1}
