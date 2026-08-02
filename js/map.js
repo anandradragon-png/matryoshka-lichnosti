@@ -3,21 +3,75 @@
   const chips = document.getElementById('fieldsChips');
   if (!chips || !window.YupDar) return;
   const { FIELDS, getPersonalityCard } = window.YupDar;
+
+  /* Блок «физика поля»: стихия, тело, цвет струны, рисунок, течение, слои. */
+  function physicsHtml(f) {
+    const p = f.physics;
+    if (!p) return '';
+    return `
+      <div class="map-physics">
+        <h5>Физика поля</h5>
+        <div class="map-phys-grid">
+          <span><i>Стихия</i>${p.element}</span>
+          <span><i>Тело</i>${p.body}</span>
+          <span><i>Цвет струны</i>${p.string}</span>
+          <span><i>Рисунок</i>${p.drawing}</span>
+        </div>
+        <p class="map-phys-flow"><b>Течение энергии:</b> ${p.flow}</p>
+        <p class="map-phys-layers"><b>Слои:</b> МА — ${p.layers.ma}; ЖИ — ${p.layers.zhi}; КУН — ${p.layers.kun}.</p>
+      </div>`;
+  }
+
+  /* Свет + тень поля по всем трём позициям (для просмотра поля целиком). */
+  function fieldAspectsHtml(f) {
+    return `
+      <div class="map-aspects">
+        <div class="map-aspect">
+          <span class="map-aspect-pos">Потенциал · МА</span>
+          <p class="map-light">☀️ ${f.light.ma}</p>
+          <p class="map-shadow"><b>Пассивная тень:</b> ${f.shadow.passive}</p>
+        </div>
+        <div class="map-aspect">
+          <span class="map-aspect-pos">Реализация · ЖИ</span>
+          <p class="map-light">☀️ ${f.light.zhi}</p>
+          <p class="map-shadow"><b>Активная тень:</b> ${f.shadow.active}</p>
+        </div>
+        <div class="map-aspect">
+          <span class="map-aspect-pos">Результат · КУН</span>
+          <p class="map-light">☀️ ${f.light.kun}</p>
+          <p class="map-shadow"><b>Тень разрыва:</b> ${f.shadow.broken}</p>
+        </div>
+      </div>`;
+  }
+
+  /* Свет + тень по позициям персонального кода (МА/ЖИ/КУН — разные поля). */
+  function personAspectsHtml(aspects) {
+    return ['ma', 'zhi', 'kun'].map(pos => {
+      const a = aspects[pos];
+      return `
+        <div class="map-aspect" style="--afc:${a.field.color}">
+          <span class="map-aspect-pos">${a.role} · ${a.field.name}</span>
+          <p class="map-light">☀️ ${a.light}</p>
+          <p class="map-shadow"><b>${a.shadowRole}:</b> ${a.shadow}</p>
+        </div>`;
+    }).join('');
+  }
+
   chips.innerHTML = Object.entries(FIELDS).map(([n, f]) =>
     `<span class="field-chip" style="--fc:${f.color}" data-field="${n}">${f.icon} ${f.name}<i>${f.theme}</i></span>`
   ).join('');
+
   chips.querySelectorAll('.field-chip').forEach(ch => ch.onclick = () => {
     const f = FIELDS[ch.dataset.field];
     document.getElementById('mapResult').innerHTML = `
       <div class="map-card" style="--fc:${f.color}">
         <div class="map-field-head"><span class="map-field-icon">${f.icon}</span>
           <div><h3>Поле ${f.name}</h3><span class="muted">${f.theme}</span></div></div>
-        <p class="map-block"><b>Потенциал (МА):</b> ${f.ma}</p>
-        <p class="map-block"><b>Реализация (ЖИ):</b> ${f.zhi}</p>
-        <p class="map-block"><b>Результат (КУН):</b> ${f.kun}</p>
-        <p class="map-shadow"><b>Тень:</b> ${f.shadow}</p>
+        <p class="map-essence">${f.essence}</p>
+        ${fieldAspectsHtml(f)}
+        ${physicsHtml(f)}
       </div>`;
-    document.getElementById('mapResult').scrollIntoView({ behavior:'smooth', block:'nearest' });
+    document.getElementById('mapResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 
   document.getElementById('calcDar').onclick = () => {
@@ -42,12 +96,12 @@
           <span><b>ЖИ</b>${r.zhi}<i>реализация</i></span>
           <span><b>КУН</b>${r.kun}<i>мощность</i></span>
         </div>
-        <div class="map-field-head" style="margin-top:6px"><span class="map-field-icon">${f.icon}</span>
-          <div><h4>Ваше Поле: ${f.name}</h4><span class="muted">${f.theme}</span></div></div>
-        <p class="map-block"><b>Ваш потенциал:</b> ${f.ma}</p>
-        <p class="map-block"><b>Как проявляется:</b> ${f.zhi}</p>
-        <p class="map-shadow"><b>Зона роста (тень):</b> ${f.shadow}</p>
+        <p class="map-essence"><b>Ваше поле (КУН): ${f.name}.</b> ${f.essence}</p>
+        <h4 class="map-aspects-title">Свет и тень вашего кода</h4>
+        ${personAspectsHtml(r.aspects)}
+        ${physicsHtml(f)}
         <a href="#pricing" class="btn btn-primary" data-nav>Раскрыть полную Карту личности</a>
       </div>`;
+    document.getElementById('mapResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 })();

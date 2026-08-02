@@ -12,7 +12,7 @@ Pages из этой папки (`prototype/` = корень git-репозито
 - `index.html` — разметка всех секций одной страницы. В конце `<body>`: `dars-data.js` (классический `defer`, задаёт `window.YupDar`) и `js/main.js` (`<script type="module">` — точка входа приложения).
 - `styles.css` — все стили. БЭМ-подобные классы.
 - `js/` — логика, разбита на файлы-секции (см. ниже). **Настоящие ES-модули** с `import/export`.
-- `dars-data.js` — данные раздела «дарсы» ОТДЕЛЬНОГО проекта **YupDar**; задаёт `window.YupDar`; классический скрипт, грузится ПЕРВЫМ. Матрёшка его только читает (`map.js`) и НЕ меняет.
+- `dars-data.js` — **своя независимая база Матрёшки** по системе «Дары» (9 Полей + 81 архетип). Задаёт `window.YupDar`; классический скрипт, грузится ПЕРВЫМ. Контент-источник: `DarsBot/app/knowledge.py` (суть, свет и тени МА/ЖИ/КУН, риски) + документы «Восприятие полей» и «Полная карта девяти полей» (физика поля). Матрёшка может опираться на источник, но канон своей базы держит здесь. Структура поля: `{name, theme, color, icon, essence, light:{ma,zhi,kun}, shadow:{passive(МА),active(ЖИ),broken(КУН)}, physics:{element,body,string,drawing,flow,layers}, risks}` (+ плоские алиасы `ma/zhi/kun`=`light.*`). При синхронизации с источником правки вести И в `DarsBot/app/knowledge.py`, И здесь.
 - `docs/` — HTML-черновики юридических политик (152-ФЗ). Все с заглушками `[реквизиты АНО]` — до боевого запуска заполнить и отдать юристу.
 - `test/` — smoke-тесты на Vitest+jsdom (`npm test`). `eslint.config.js`, `vitest.config.js`, `.prettierrc.json` — качество кода. `.github/workflows/ci.yml` — CI (линтер+тесты).
 
@@ -23,7 +23,7 @@ Pages из этой папки (`prototype/` = корень git-репозито
 3. `practices.js` — каталог практик и модалка; экспортирует `PRACTICES`, `EMOTION_GUIDE`, `openPractice`, `scrollToPractices`, `filterPractices`.
 4. `organizer.js` — органайзер эмоций, дневник, статистика, стрик, колесо Плутчика; импортирует `ML_KEYS`, `escapeHtml`; экспортирует `loadEntries`, `computeStreak`, `emotionColor`, `entryNames`.
 5. `chat.js` — чат-бот (демо-сценарий/живой YandexGPT); импортирует `escapeHtml` и символы practices.
-6. `map.js` — карта личности (Дары/Поля), считает через `window.YupDar` (проект YupDar, не трогать).
+6. `map.js` — карта личности (Дары/Поля), считает через `window.YupDar` (своя база `dars-data.js`); расшифровка выдаёт свет+тень по позициям МА/ЖИ/КУН и физику поля.
 7. `billing.js` — переключатель тарифов + заглушка оплаты (самодостаточен).
 8. `account.js` — личный кабинет: вход/регистрация, сид-аккаунты, админка, отзывы; импортирует `ML_KEYS`, `escapeHtml` и символы organizer.
 9. `cookie.js` — cookie-баннер; импортирует `ML_KEYS`.

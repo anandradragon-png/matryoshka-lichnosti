@@ -27,14 +27,14 @@ a{color:inherit;text-decoration:none}
 
 /* Header */
 .site-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.header-inner{display:flex;align-items:center;gap:24px;height:72px}
+.header-inner{display:flex;align-items:center;gap:16px;height:72px}
 .logo{display:flex;align-items:center;gap:12px;font-weight:800}
 .logo-text{font-size:15px;line-height:1.05}
 .logo-text b{color:var(--purple-d)}
 .logo-mark{width:38px;height:44px;border-radius:12px 12px 16px 16px;background:var(--grad);display:grid;place-items:center;position:relative;box-shadow:var(--shadow)}
 .doll{width:16px;height:22px;background:#fff;border-radius:8px 8px 10px 10px;position:relative}
 .doll::after{content:"";position:absolute;left:50%;top:5px;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--pink)}
-.main-nav{display:flex;gap:16px;margin-left:auto;font-weight:600;font-size:14px}
+.main-nav{display:flex;gap:13px;margin-left:auto;font-weight:600;font-size:13.5px}
 .main-nav a{color:var(--muted);transition:.2s;white-space:nowrap}
 .main-nav a:hover,.main-nav a.active{color:var(--purple-d)}
 .main-nav a.nav-corp{color:var(--purple-d);font-weight:700;border:1.5px solid color-mix(in srgb,var(--purple) 45%,#fff);border-radius:999px;padding:5px 12px;background:color-mix(in srgb,var(--purple) 7%,#fff)}
@@ -45,7 +45,7 @@ a{color:inherit;text-decoration:none}
 
 /* Hero */
 .hero{padding:70px 0 60px;background:radial-gradient(1200px 500px at 80% -10%,#F3E9FF 0,transparent 60%),radial-gradient(900px 500px at -10% 20%,#E7FBFF 0,transparent 55%)}
-.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(210px,.8fr);gap:32px;align-items:center}
 .badge{display:inline-block;background:#fff;border:1px solid var(--line);color:var(--purple-d);font-weight:700;font-size:13px;padding:7px 14px;border-radius:999px;box-shadow:var(--shadow)}
 .hero h1{font-size:clamp(34px,5vw,54px);line-height:1.05;margin:18px 0 16px;font-weight:800;letter-spacing:-.02em}
 .lead{font-size:18px;color:var(--muted);max-width:33em}
@@ -73,6 +73,15 @@ a{color:inherit;text-decoration:none}
 .smile{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:22px;height:11px;border:0 solid var(--pink);border-bottom:3px solid var(--pink);border-radius:0 0 22px 22px}
 .hero-visual-hint{font-size:13px;color:var(--muted)}
 
+/* Hero — компактная карточка «Матрёшка для компании» справа */
+.hero-company{align-self:center;display:flex;flex-direction:column;gap:12px;
+  background:linear-gradient(135deg,#1b1636,#2a1f4d);color:#fff;border-radius:var(--radius);
+  padding:24px 22px;box-shadow:0 18px 50px rgba(124,58,237,.3);border:1px solid rgba(196,181,253,.4)}
+.hero-company-tag{color:#c4b5fd;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:12px}
+.hero-company h3{color:#fff;font-size:22px;line-height:1.15;margin:0}
+.hero-company p{color:#cfc9e8;font-size:14px;line-height:1.45;margin:0}
+.hero-company .btn{align-self:flex-start;margin-top:4px}
+
 /* Sections */
 .section{padding:78px 0}
 .section-soft{background:var(--bg-soft)}
@@ -84,16 +93,17 @@ a{color:inherit;text-decoration:none}
 /* Cards */
 .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
 .cards{display:grid;gap:22px}
-.services{grid-template-columns:repeat(4,1fr)}
+.services{grid-template-columns:repeat(5,1fr)}
 .svc{border-top:4px solid var(--accent)}
 .svc-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:color-mix(in srgb,var(--accent) 15%,#fff);margin-bottom:14px}
 .svc h3{font-size:18px;margin-bottom:8px}
 .svc p{color:var(--muted);font-size:14.5px}
 
 /* How */
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:44px}
-.how-text h3{font-size:22px;margin-bottom:12px}
-.how-text p{color:var(--muted);margin-bottom:12px}
+.how-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:44px}
+.how-grid .how-text.card{padding:18px}
+.how-text h3{font-size:19px;margin-bottom:10px}
+.how-text p{color:var(--muted);margin-bottom:10px;font-size:14px}
 .ego-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin:14px 0}
 .ego-list li{color:var(--muted);font-size:14.5px}
 .ego{display:inline-block;font-weight:700;color:#fff;padding:3px 12px;border-radius:999px;margin-right:8px;font-size:13px}
@@ -104,11 +114,11 @@ a{color:inherit;text-decoration:none}
 .cycle-emotion span{background:var(--bg-soft);border:1px solid var(--line);padding:8px 14px;border-radius:999px;font-weight:700;font-size:13px}
 .cycle-emotion i{color:var(--purple);font-style:normal;font-weight:800}
 
-.kpt-cycle{position:relative;width:260px;height:260px;margin:16px auto}
-.kpt-node{position:absolute;top:50%;left:50%;width:88px;padding:9px 6px;text-align:center;font-size:12.5px;font-weight:700;background:#fff;border:2px solid var(--purple);color:var(--purple-d);border-radius:12px;transform:
-  rotate(calc(var(--i)*60deg)) translate(0,-120px) rotate(calc(var(--i)*-60deg)) translate(-50%,-50%);transform-origin:0 0}
-.kpt-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)}
-.kpt-example{font-size:14px;background:var(--bg-soft);padding:14px;border-radius:14px;border:1px solid var(--line)}
+.kpt-cycle{position:relative;width:176px;height:176px;margin:14px auto}
+.kpt-node{position:absolute;top:50%;left:50%;width:62px;padding:6px 3px;text-align:center;font-size:11px;line-height:1.15;font-weight:700;background:#fff;border:2px solid var(--purple);color:var(--purple-d);border-radius:10px;transform:
+  rotate(calc(var(--i)*60deg)) translate(0,-76px) rotate(calc(var(--i)*-60deg)) translate(-50%,-50%);transform-origin:0 0}
+.kpt-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;box-shadow:var(--shadow)}
+.kpt-example{font-size:13px;background:var(--bg-soft);padding:12px;border-radius:12px;border:1px solid var(--line)}
 
 /* Flow */
 .flow{display:flex;align-items:stretch;justify-content:center;gap:6px;flex-wrap:wrap}
@@ -447,6 +457,22 @@ a{color:inherit;text-decoration:none}
 .map-block b{color:var(--ink)}
 .map-shadow{font-size:14px;color:var(--muted);background:var(--bg-soft);border-radius:12px;padding:11px 14px;margin:8px 0 16px;border-left:3px solid var(--fc)}
 .map-card .btn{margin-top:6px}
+/* --- Расшифровка: суть, свет+тень по позициям, физика поля --- */
+.map-essence{font-size:14.5px;color:var(--ink);margin:0 0 16px;line-height:1.5}
+.map-aspects-title{margin:6px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.map-aspects{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.map-aspect{--afc:var(--fc);background:var(--bg-soft);border:1px solid var(--line);border-left:3px solid var(--afc);border-radius:14px;padding:12px 14px}
+.map-aspect-pos{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--afc);margin-bottom:6px}
+.map-light{font-size:14px;color:var(--ink);margin:0 0 6px;line-height:1.45}
+.map-aspect .map-shadow{background:none;border:0;border-radius:0;padding:0;margin:0;font-size:13.5px;line-height:1.45}
+.map-aspect .map-shadow b{color:var(--afc)}
+.map-physics{margin-top:6px;border-top:1px dashed var(--line);padding-top:14px}
+.map-physics h5{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.map-phys-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.map-phys-grid span{display:flex;flex-direction:column;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:13.5px;color:var(--ink);font-weight:600}
+.map-phys-grid i{font-size:11px;font-style:normal;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.map-phys-flow,.map-phys-layers{font-size:13.5px;color:var(--muted);margin:6px 0 0;line-height:1.45}
+.map-phys-flow b,.map-phys-layers b{color:var(--ink)}
 .fields-preview{text-align:center}
 .fields-title{text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:16px}
 .fields-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
@@ -484,32 +510,29 @@ a{color:inherit;text-decoration:none}
   font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .pricing-divider::before,.pricing-divider::after{content:"";flex:1;height:1px;background:var(--line)}
 
-/* Гусеница + карточка «Матрёшка для компании» справа */
-.journey-corp{display:grid;grid-template-columns:1.6fr 1fr;gap:32px;align-items:start;margin-top:40px}
-.journey-corp .journey{margin-top:0}
-.company-card{grid-template-columns:1fr;margin:0;position:sticky;top:96px}
-
 /* Journey — ссылка и кнопка */
 .journey-link{display:inline-block;margin-top:12px;font-weight:800;font-size:14px;color:var(--purple);text-decoration:none}
 .journey-link:hover{text-decoration:underline}
 .journey-fb-btn{margin-top:14px}
 
 /* Responsive */
-@media(max-width:1200px){
+@media(max-width:1279px){
+  /* «Как это работает» и «5 слоёв»: 5 в ряд только на широком десктопе, иначе по 2 */
+  .how-grid,.services{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:1300px){
   .main-nav,.header-actions{display:none}
   .main-nav.open{display:flex;position:absolute;top:72px;left:0;right:0;background:#fff;flex-direction:column;padding:18px 6%;gap:14px;border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
   .burger{display:flex;margin-left:auto}
 }
 @media(max-width:960px){
-  .hero-grid,.how-grid,.organizer-grid,.phone-wrap,.map-grid,.b2b,.journey-corp{grid-template-columns:1fr}
-  .company-card{position:static}
+  .hero-grid,.organizer-grid,.phone-wrap,.map-grid,.b2b{grid-template-columns:1fr}
   .services,.practices,.psy,.pricing,.value,.tests,.how-grid{grid-template-columns:1fr 1fr}
   .streak-week{width:100%;margin-left:0;justify-content:space-between}
-  .hero-visual{order:-1}
   .phone-wrap{justify-items:center}
 }
 @media(max-width:640px){
-  .services,.practices,.psy,.pricing,.value,.tests{grid-template-columns:1fr}
+  .services,.practices,.psy,.pricing,.value,.tests,.how-grid{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr}
   .phone{width:100%}
   .flow-arrow{transform:rotate(90deg)}
