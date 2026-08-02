@@ -35,12 +35,16 @@ a{color:inherit;text-decoration:none}
 .doll{width:16px;height:22px;background:#fff;border-radius:8px 8px 10px 10px;position:relative}
 .doll::after{content:"";position:absolute;left:50%;top:5px;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--pink)}
 .nav-drawer{display:contents}
-.main-nav{display:flex;gap:13px;margin-left:auto;font-weight:600;font-size:13.5px}
+.main-nav{display:flex;gap:10px;margin-left:auto;font-weight:600;font-size:12.5px}
 .main-nav a{color:var(--muted);transition:.2s;white-space:nowrap}
 .main-nav a:hover,.main-nav a.active{color:var(--purple-d)}
-.main-nav a.nav-corp{color:var(--purple-d);font-weight:700;border:1.5px solid color-mix(in srgb,var(--purple) 45%,#fff);border-radius:999px;padding:5px 12px;background:color-mix(in srgb,var(--purple) 7%,#fff)}
+.main-nav a.nav-corp{color:var(--purple-d);font-weight:700;border:1.5px solid color-mix(in srgb,var(--purple) 45%,#fff);border-radius:999px;padding:5px 9px;background:color-mix(in srgb,var(--purple) 7%,#fff)}
 .main-nav a.nav-corp:hover,.main-nav a.nav-corp.active{background:var(--grad);color:#fff;border-color:transparent}
+/* Перекрёстная ссылка на сайт продуктов ЮПЛАБ (внешний проект, палитра бренда — бирюза/золото) */
+.main-nav a.nav-yuplab{color:#3d8792;font-weight:700;border:1.5px solid rgba(95,170,182,.5);border-radius:999px;padding:5px 9px;background:rgba(95,170,182,.10)}
+.main-nav a.nav-yuplab:hover{background:#5faab6;color:#fff;border-color:transparent}
 .header-actions{display:flex;gap:10px}
+.header-actions .btn{padding:9px 16px;font-size:13.5px}
 .burger{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
 .burger span{width:24px;height:2px;background:var(--ink);border-radius:2px;transition:.2s}
 
@@ -525,7 +529,7 @@ a{color:inherit;text-decoration:none}
   /* «Как это работает» и «5 слоёв»: 5 в ряд только на широком десктопе, иначе по 2 */
   .how-grid,.services{grid-template-columns:repeat(2,1fr)}
 }
-@media(max-width:1300px){
+@media(max-width:1360px){
   /* Обёртка nav-drawer на десктопе прозрачна (display:contents) — на мобильных
      скрываем её содержимое, а по бургеру раскрываем единой панелью, где вместе
      и ссылки навигации, и кнопки «Войти»/«Начать бесплатно» (вход в кабинет). */
