@@ -4,9 +4,9 @@ const globals = require('globals');
 // Плоская конфигурация ESLint 9.
 // Приложение «Матрёшка» переведено на настоящие ES-модули (import/export),
 // поэтому для js/**/*.js включён no-undef — ESLint видит связи через импорты и
-// ловит обращения к необъявленным именам. dars-data.js — отдельный проект
-// (YupDar): это классический скрипт, задающий window.YupDar; для него сохранён
-// sourceType 'script' и no-undef выключен (файл самодостаточен, менять нельзя).
+// ловит обращения к необъявленным именам. dars-data.js — собственная независимая
+// база «Матрёшки» (проект YupDar): классический скрипт, задающий window.YupDar;
+// для него сохранён sourceType 'script' и no-undef выключен (файл самодостаточен).
 module.exports = [
   { ignores: ['node_modules/**', 'docs/**', '.git/**'] },
   js.configs.recommended,

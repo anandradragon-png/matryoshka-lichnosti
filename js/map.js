@@ -44,17 +44,32 @@
       </div>`;
   }
 
-  /* Свет + тень по позициям персонального кода (МА/ЖИ/КУН — разные поля). */
+  /* Персональная расшифровка — человекоориентированный формат: три грани
+     характера тёплым понятным языком, без технических меток «поля/МА/ЖИ/КУН». */
+  const ASPECT_TITLES = { ma:'Ваша внутренняя опора', zhi:'Как вы проявляете себя', kun:'Что вы дарите близким и миру' };
+  const ASPECT_SHADOWS = { ma:'Когда теряете равновесие', zhi:'Когда выбиваетесь из сил', kun:'В трудные периоды' };
   function personAspectsHtml(aspects) {
     return ['ma', 'zhi', 'kun'].map(pos => {
       const a = aspects[pos];
       return `
         <div class="map-aspect" style="--afc:${a.field.color}">
-          <span class="map-aspect-pos">${a.role} · ${a.field.name}</span>
+          <span class="map-aspect-pos">${ASPECT_TITLES[pos]}</span>
           <p class="map-light">☀️ ${a.light}</p>
-          <p class="map-shadow"><b>${a.shadowRole}:</b> ${a.shadow}</p>
+          <p class="map-shadow"><b>${ASPECT_SHADOWS[pos]}:</b> ${a.shadow}</p>
         </div>`;
     }).join('');
+  }
+
+  /* Эмоциональная опора: как ощущается трудное состояние и как вернуться в ресурс. */
+  function resourceHtml(f) {
+    const r = f.resource;
+    if (!r) return '';
+    return `
+      <div class="map-resource">
+        <h4>Как вернуться к себе</h4>
+        <p class="map-res-signs">${r.signs}</p>
+        <p class="map-res-steps">☘️ ${r.steps}</p>
+      </div>`;
   }
 
   chips.innerHTML = Object.entries(FIELDS).map(([n, f]) =>
@@ -91,15 +106,10 @@
         <div class="map-code">${r.code}</div>
         <h3 class="map-dar-name">${r.darName}</h3>
         <p class="map-arch">${r.darArch}</p>
-        <div class="map-mzk">
-          <span><b>МА</b>${r.ma}<i>потенциал</i></span>
-          <span><b>ЖИ</b>${r.zhi}<i>реализация</i></span>
-          <span><b>КУН</b>${r.kun}<i>мощность</i></span>
-        </div>
-        <p class="map-essence"><b>Ваше поле (КУН): ${f.name}.</b> ${f.essence}</p>
-        <h4 class="map-aspects-title">Свет и тень вашего кода</h4>
+        <p class="map-essence">${f.essence}</p>
+        <h4 class="map-aspects-title">Три грани вашего характера</h4>
         ${personAspectsHtml(r.aspects)}
-        ${physicsHtml(f)}
+        ${resourceHtml(f)}
         <a href="#pricing" class="btn btn-primary" data-nav>Раскрыть полную Карту личности</a>
       </div>`;
     document.getElementById('mapResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });

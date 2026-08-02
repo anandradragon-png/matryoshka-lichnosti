@@ -473,6 +473,10 @@ a{color:inherit;text-decoration:none}
 .map-phys-grid i{font-size:11px;font-style:normal;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
 .map-phys-flow,.map-phys-layers{font-size:13.5px;color:var(--muted);margin:6px 0 0;line-height:1.45}
 .map-phys-flow b,.map-phys-layers b{color:var(--ink)}
+.map-resource{margin-top:6px;border-top:1px dashed var(--line);padding-top:14px}
+.map-resource h4{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.map-res-signs{font-size:14px;color:var(--muted);margin:0 0 8px;line-height:1.5}
+.map-res-steps{font-size:14.5px;color:var(--ink);margin:0;line-height:1.55;background:var(--bg-soft);border:1px solid var(--line);border-left:3px solid var(--fc);border-radius:14px;padding:12px 14px}
 .fields-preview{text-align:center}
 .fields-title{text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:16px}
 .fields-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
@@ -622,7 +626,7 @@ a{color:inherit;text-decoration:none}
 .am-avatar.admin{background:linear-gradient(135deg,#1F2233,#4B4E6D)}
 
 /* ===== Колесо эмоций Плутчика ===== */
-.plutchik-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+.plutchik-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:24px}
 .plutchik-legend{display:flex;flex-direction:column;gap:8px}
 .pl-title{font-weight:800;font-size:15px;margin-bottom:6px}
 .pl-row{display:flex;align-items:center;gap:10px;border-left:4px solid var(--e);padding:6px 0 6px 12px}
@@ -637,6 +641,9 @@ a{color:inherit;text-decoration:none}
 .dyad{font-size:12.5px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:6px 10px}
 .dyad b{color:var(--e)}
 .dyad em{font-style:normal;font-weight:800;color:var(--purple-d)}
+/* Колесо Плутчика: на планшете и уже — стек в одну колонку (правило идёт ПОСЛЕ
+   базового, чтобы выигрывать по порядку источника). */
+@media(max-width:760px){.plutchik-grid{grid-template-columns:1fr}}
 
 /* ===== Панель разработчика (админ) ===== */
 .adm-note{background:#FFF7E6;border:1px solid #F5E1B8;color:#8a6d1f;font-size:12.5px;line-height:1.4;padding:10px 13px;border-radius:12px;margin-bottom:16px}
