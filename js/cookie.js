@@ -28,4 +28,6 @@ import { ML_KEYS } from './core.js';
   };
   document.getElementById('cookieAccept').addEventListener('click', () => decide('all'));
   document.getElementById('cookieDecline').addEventListener('click', () => decide('necessary'));
+  // Крестик просто закрывает баннер (равнозначно «только необходимые»).
+  document.getElementById('cookieClose').addEventListener('click', () => decide('necessary'));
 })();

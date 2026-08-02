@@ -249,44 +249,6 @@
   </div>
 </section>
 
-<!-- ======= CHATBOT DEMO ======= -->
-<section class="section" id="bot">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">Виртуальный ассистент</span>
-      <h2>Поговорите с чат-ботом</h2>
-      <p class="section-sub">Демонстрация диалога: бот знакомит с эмотологией и подбирает технику под ваше состояние.</p>
-    </div>
-
-    <div class="phone-wrap">
-      <div class="phone">
-        <div class="phone-top">
-          <span class="back">‹</span>
-          <div class="phone-title"><b>Матрёшка личности</b><span>bot</span></div>
-          <span class="doll-avatar"></span>
-        </div>
-        <div class="chat" id="chat"></div>
-        <div class="quick-replies" id="quickReplies"></div>
-        <div class="chat-input">
-          <input type="text" id="chatInput" placeholder="Напишите сообщение…" aria-label="Сообщение боту" autocomplete="off" />
-          <button id="chatSend" aria-label="Отправить">➤</button>
-        </div>
-        <p class="chat-disclaimer">Я ИИ-ассистент поддержки и не заменяю врача. В кризисной ситуации звоните на телефон доверия <b>8-800-2000-122</b> или в службу <b>112</b>.</p>
-      </div>
-      <div class="phone-note card">
-        <h3>Что умеет ассистент</h3>
-        <ul class="check-list">
-          <li>Помогает назвать и прожить эмоцию</li>
-          <li>Подбирает технику под состояние</li>
-          <li>Не осуждает — общаться комфортно и безопасно</li>
-          <li>Данные анонимны и надёжно защищены</li>
-        </ul>
-        <p class="muted">Это интерактивная демонстрация. В приложении диалог ведёт ИИ.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ======= КОЛЕСО ЭМОЦИЙ ПЛУТЧИКА ======= -->
 <section class="section" id="plutchik">
   <div class="container">
@@ -424,6 +386,44 @@
     </div>
     <div class="practice-filters" id="practiceFilters"></div>
     <div class="cards practices" id="practicesGrid"></div>
+  </div>
+</section>
+
+<!-- ======= CHATBOT DEMO ======= -->
+<section class="section" id="bot">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Виртуальный ассистент</span>
+      <h2>Поговорите с чат-ботом</h2>
+      <p class="section-sub">Демонстрация диалога: бот знакомит с эмотологией и подбирает технику под ваше состояние.</p>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-top">
+          <span class="back">‹</span>
+          <div class="phone-title"><b>Матрёшка личности</b><span>bot</span></div>
+          <span class="doll-avatar"></span>
+        </div>
+        <div class="chat" id="chat"></div>
+        <div class="quick-replies" id="quickReplies"></div>
+        <div class="chat-input">
+          <input type="text" id="chatInput" placeholder="Напишите сообщение…" aria-label="Сообщение боту" autocomplete="off" />
+          <button id="chatSend" aria-label="Отправить">➤</button>
+        </div>
+        <p class="chat-disclaimer">Я ИИ-ассистент поддержки и не заменяю врача. В кризисной ситуации звоните на телефон доверия <b>8-800-2000-122</b> или в службу <b>112</b>.</p>
+      </div>
+      <div class="phone-note card">
+        <h3>Что умеет ассистент</h3>
+        <ul class="check-list">
+          <li>Помогает назвать и прожить эмоцию</li>
+          <li>Подбирает технику под состояние</li>
+          <li>Не осуждает — общаться комфортно и безопасно</li>
+          <li>Данные анонимны и надёжно защищены</li>
+        </ul>
+        <p class="muted">Это интерактивная демонстрация. В приложении диалог ведёт ИИ.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -615,6 +615,7 @@
 
 <!-- ======= COOKIE-БАННЕР ======= -->
 <div class="cookie-banner" id="cookieBanner" hidden>
+  <button class="cookie-close" id="cookieClose" aria-label="Закрыть">&times;</button>
   <p>Мы используем файлы cookie для работы сайта и улучшения сервиса. Продолжая пользоваться сайтом, вы соглашаетесь с <a href="docs/politika-cookie.html" target="_blank" rel="noopener">Политикой в отношении файлов cookie</a>.</p>
   <div class="cookie-actions">
     <button class="cookie-decline" id="cookieDecline">Только необходимые</button>
