@@ -16,11 +16,18 @@ export const ML_KEYS = {
 
 /* ---------- Мобильное меню + активная навигация ---------- */
 const burger = document.getElementById('burger');
-const nav = document.getElementById('mainNav');
-burger.addEventListener('click', () => nav.classList.toggle('open'));
+// Выпадающее меню на мобильных содержит и ссылки навигации, и кнопки
+// «Войти»/«Начать бесплатно», поэтому переключаем класс на общей обёртке
+// nav-drawer, а не только на nav — иначе на телефоне пропадал вход в кабинет.
+const navDrawer = document.getElementById('navDrawer');
+burger.addEventListener('click', () => navDrawer.classList.toggle('open'));
 document.querySelectorAll('[data-nav]').forEach(a =>
-  a.addEventListener('click', () => nav.classList.remove('open'))
+  a.addEventListener('click', () => navDrawer.classList.remove('open'))
 );
+// «Войти» открывает модалку кабинета (логика в account.js) — здесь только
+// закрываем выпадающее меню, чтобы оно не оставалось поверх модалки.
+const authBtnEl = document.getElementById('authBtn');
+if (authBtnEl) authBtnEl.addEventListener('click', () => navDrawer.classList.remove('open'));
 
 const sections = [...document.querySelectorAll('section[id]')];
 const navLinks = [...document.querySelectorAll('.main-nav a')];
