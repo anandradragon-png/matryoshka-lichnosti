@@ -282,7 +282,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
         <h4>Топ эмоций</h4>
         <div class="adm-emotions">
           ${topEmotions.length ? topEmotions.map(([n, c]) =>
-            `<span class="adm-chip" style="--e:${emotionColor(n)}">${n} · ${c}</span>`).join('') : '<span class="muted">Пока нет данных</span>'}
+            `<span class="adm-chip" style="--e:${emotionColor(n)}">${escapeHtml(n)} · ${c}</span>`).join('') : '<span class="muted">Пока нет данных</span>'}
         </div>
       </div>
 

@@ -151,4 +151,31 @@ describe('smoke', () => {
     expect(saved.length).toBe(3); // было 1 + 2 новых
     expect(saved.map(e => e.date)).toEqual([1000, 2000, 3000]); // отсортировано по дате
   });
+
+  test('импорт дневника: враждебные имя и цвет не оживают в разметке (XSS)', async () => {
+    // Файл импорта — граница системы. isValidEntry проверяет только тип поля,
+    // поэтому имя и цвет могут прийти любыми. Имя идёт в текст, цвет — в атрибут
+    // style: там кавычка позволяет дописать свой атрибут, escapeHtml не спасает.
+    const importInput = document.getElementById('diaryImportInput');
+    const fileJson = JSON.stringify({
+      app: 'matryoshka', kind: 'diary', version: 1,
+      entries: [{
+        date: Date.now(), // в текущем периоде статистики, иначе запись не попадёт в лог
+        intensity: 5,
+        emotions: [{ name: '<img src=x onerror=alert(1)>', color: 'red" onmouseover="alert(1)' }],
+      }],
+    });
+    const file = new File([fileJson], 'evil.json', { type: 'application/json' });
+    Object.defineProperty(importInput, 'files', { value: [file], configurable: true });
+    importInput.dispatchEvent(new Event('change'));
+    await sleep(50); // FileReader асинхронный
+
+    const log = document.getElementById('diaryLog');
+    expect(log.querySelectorAll('img').length).toBe(0); // тег остался текстом
+    const tag = log.querySelector('.tag');
+    expect(tag, 'запись не отрисовалась').toBeTruthy();
+    expect(tag.textContent).toBe('<img src=x onerror=alert(1)>');
+    expect(tag.getAttribute('onmouseover')).toBe(null); // цвет не вылез из style
+    expect(tag.getAttribute('style')).toBe('--e:#8B5CF6'); // невалидный цвет заменён
+  });
 });

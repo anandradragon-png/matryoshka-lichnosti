@@ -142,6 +142,11 @@ const saveEntries = e => localStorage.setItem(STORE_KEY, JSON.stringify(e));
 const entryEmotions = e => (Array.isArray(e.emotions) && e.emotions.length)
   ? e.emotions
   : (e.emotion ? [{ name: e.emotion, color: e.color }] : []);
+// Цвет записи приходит из localStorage (в т.ч. из импортированного файла) и уходит
+// в атрибут style. escapeHtml тут не спасёт: внутри style кавычка не нужна, чтобы
+// подставить чужие правила. Поэтому пропускаем только настоящий HEX-цвет.
+const DEFAULT_EMOTION_COLOR = '#8B5CF6';
+const safeColor = c => (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(String(c)) ? c : DEFAULT_EMOTION_COLOR);
 export const entryNames = e => entryEmotions(e).map(x => x.name);
 // Период аналитики: 'week' | 'month' | 'all'
 let statsPeriod = 'week';
@@ -245,7 +250,7 @@ function renderInsights(entries) {
   const freq = {};
   entries.forEach(e => entryNames(e).forEach(n => freq[n] = (freq[n] || 0) + 1));
   const top = Object.entries(freq).sort((a, b) => b[1] - a[1])[0];
-  if (top) insights.push(`🎯 Чаще всего вы отмечаете: <b>${top[0]}</b>. Обратите на это внимание в практиках.`);
+  if (top) insights.push(`🎯 Чаще всего вы отмечаете: <b>${escapeHtml(top[0])}</b>. Обратите на это внимание в практиках.`);
   box.innerHTML = insights.map(t => `<div class="insight">${t}</div>`).join('');
 }
 
@@ -274,7 +279,7 @@ function renderDiary() {
   };
   const last = entries.slice(-Math.min(entries.length, statsPeriod === 'week' ? 10 : 31));
   chartEl.innerHTML = last.map(e => {
-    const col = entryEmotions(e)[0]?.color || e.color || '#8B5CF6';
+    const col = safeColor(entryEmotions(e)[0]?.color || e.color);
     return `<div class="bar" style="--e:${col}">
       <div class="fill" style="height:${(e.intensity || 5) * 10}%"></div>
       <small>${label(e)}</small></div>`;
@@ -285,9 +290,9 @@ function renderDiary() {
       d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
     const meta = e.sleep != null ? ` <span class="log-meta">😴${e.sleep} ⚡${e.energy}</span>` : '';
     const tags = entryEmotions(e).map(x =>
-      `<span class="tag" style="--e:${x.color}">${x.name}</span>`).join('');
+      `<span class="tag" style="--e:${safeColor(x.color)}">${escapeHtml(x.name)}</span>`).join('');
     const comp = e.compound ? `<span class="tag tag-comp">→ ${escapeHtml(String(e.compound))}</span>` : '';
-    return `<div class="log-item" style="--e:${entryEmotions(e)[0]?.color || '#8B5CF6'}">
+    return `<div class="log-item" style="--e:${safeColor(entryEmotions(e)[0]?.color)}">
       <span class="tags">${tags}${comp} <b class="tag-int">· ${e.intensity || 5}</b></span>
       <span class="txt">${e.note ? escapeHtml(e.note) : '<i>без заметки</i>'}${meta}</span>
       <time>${dt}</time></div>`;
