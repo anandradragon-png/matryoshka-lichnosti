@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUCKET: matreshka-lichnosti.ru
-      CDN_RESOURCE: bc8rxhacqrndh7romhkr
+      CDN_RESOURCE: bc8rv4gw2cpz2ndhpxs2
       FOLDER_ID: b1gdupjv9cfla21gilcm
     steps:
       - uses: actions/checkout@v4
