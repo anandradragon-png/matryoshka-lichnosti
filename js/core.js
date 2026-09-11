@@ -12,6 +12,8 @@ export const ML_KEYS = {
   feedback: 'ml_feedback',
   cookie: 'ml_cookie_consent',
   companies: 'ml_companies',
+  journal: 'ml_journal',
+  plan: 'ml_plan',
 };
 
 /* ---------- Мобильное меню + активная навигация ---------- */

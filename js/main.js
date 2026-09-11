@@ -7,10 +7,13 @@
    модуля в index.html, поэтому map.js его уже видит. */
 import './core.js';
 import './util.js';
+import './journal.js';
+import './plan.js';
 import './practices.js';
 import './organizer.js';
 import './chat.js';
 import './map.js';
+import './report/launcher.js';
 import './billing.js';
 import './lead.js';
 import './account.js';

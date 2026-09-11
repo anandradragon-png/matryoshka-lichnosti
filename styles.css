@@ -200,7 +200,10 @@ a{color:inherit;text-decoration:none}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;font-weight:700;font-size:14px}
 .field textarea{border:1px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:14px;resize:vertical;outline:none}
 .field textarea:focus{border-color:var(--purple)}
-.intensity{display:flex;align-items:center;gap:12px;margin-bottom:18px;font-weight:700;font-size:14px}
+.intensity{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px;font-weight:700;font-size:14px}
+/* Длинная подпись («Насколько сильно это чувствовалось») занимает всю строку,
+   иначе на телефоне ползунку остаётся 80px и в него невозможно попасть. */
+.intensity label{flex:0 0 100%;margin-bottom:-4px}
 .intensity input{flex:1;accent-color:var(--purple)}
 .intensity b{color:var(--purple-d);min-width:20px}
 .chart{display:flex;align-items:flex-end;gap:8px;height:170px;padding:12px;background:var(--bg-soft);border-radius:14px;margin-bottom:16px;overflow-x:auto}
@@ -305,6 +308,14 @@ a{color:inherit;text-decoration:none}
 .cta-inner h2{color:#fff}
 .cta-inner p{opacity:.9;margin:10px 0 24px;font-size:18px}
 .cta-inner .btn-primary{background:#fff;color:var(--purple-d);box-shadow:0 12px 30px rgba(0,0,0,.2)}
+
+/* Ecosystem bar — соседние сайты группы, перед подвалом */
+.ecosystem-bar{background:#1a1530;border-bottom:1px solid rgba(139,92,246,.20)}
+.ecosystem-bar__inner{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px;padding-top:14px;padding-bottom:14px;font-size:13px}
+.ecosystem-bar__label{color:#8c87ab;letter-spacing:.06em;text-transform:uppercase;font-size:11px;white-space:nowrap}
+.ecosystem-bar__link{color:#a89dcc;text-decoration:none;white-space:nowrap;transition:color .15s ease-out}
+.ecosystem-bar__link:hover{color:#c4b5f7}
+.ecosystem-bar__sep{color:#3d3558}
 
 /* Footer */
 .site-footer{background:#15132a;color:#cfcbe6;padding:56px 0 26px}
@@ -551,6 +562,8 @@ a{color:inherit;text-decoration:none}
   .phone{width:100%}
   .flow-arrow{transform:rotate(90deg)}
   .flow{flex-direction:column;align-items:center}
+  .ecosystem-bar__inner{flex-direction:column;align-items:flex-start;gap:8px}
+  .ecosystem-bar__sep{display:none}
 }
 
 /* Заглушка оплаты — всплывающее уведомление */
@@ -708,6 +721,50 @@ a{color:inherit;text-decoration:none}
 .acc .acc-body{padding:0 24px 22px}
 .acc[open]>summary{border-bottom:1px solid var(--line)}
 .acc[open] .acc-body{padding-top:18px}
+
+/* ===== Кнопка отчёта в органайзере (префикс report-) ===== */
+.report-cta{margin-top:18px;padding:16px 18px;border-radius:16px;background:var(--bg-soft);border:1px solid var(--line);text-align:center}
+.report-cta__btn{width:100%}
+.report-cta__hint{margin-top:10px;font-size:13px;color:var(--muted)}
+
+/* ===== Отметка «прошёл практику» в модалке практики (префикс pm-) ===== */
+.pm-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.pm-actions .btn{flex:1 1 200px}
+.pm-done--on{background:var(--bg-soft);color:var(--muted);box-shadow:none;cursor:default;border:2px solid var(--line)}
+.pm-done--on:hover{transform:none;box-shadow:none}
+
+/* ===== Демо-переключатель тарифа в кабинете (префикс plan-) ===== */
+.plan-switch{margin:16px 0 4px;padding:14px 16px;border-radius:16px;background:var(--bg-soft);border:1px solid var(--line)}
+.plan-switch__head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.plan-switch__lbl{font-size:13px;font-weight:700}
+.plan-switch__demo{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--purple-d);background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+.plan-switch__btns{display:flex;gap:6px}
+.plan-switch__btn{flex:1;font:inherit;font-size:13px;font-weight:700;padding:9px 6px;border-radius:12px;cursor:pointer;background:#fff;color:var(--muted);border:1.5px solid var(--line);transition:.2s}
+.plan-switch__btn:hover{color:var(--purple-d);border-color:var(--purple)}
+.plan-switch__btn.on{background:var(--grad);color:#fff;border-color:transparent}
+.plan-switch__hint{margin-top:9px;font-size:12px;color:var(--muted)}
+
+/* ===== Выбор периода отчёта (префикс rep-) ===== */
+.rep-modal{position:fixed;inset:0;z-index:120;display:none}
+.rep-modal.open{display:block}
+.rep-backdrop{position:absolute;inset:0;background:rgba(31,34,51,.55);backdrop-filter:blur(3px)}
+.rep-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(480px,92vw);max-height:88vh;overflow:auto;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 26px}
+.rep-close{position:absolute;right:14px;top:10px;font-size:26px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer}
+.rep-close:hover{color:var(--ink)}
+.rep-title{font-size:20px;margin-bottom:6px}
+.rep-sub{font-size:14px;color:var(--muted);margin-bottom:16px}
+.rep-periods{display:grid;gap:10px}
+.rep-period{position:relative;text-align:left;font:inherit;padding:14px 16px;border-radius:14px;cursor:pointer;background:#fff;border:1.5px solid var(--line);transition:.2s}
+.rep-period:hover{border-color:var(--purple);background:var(--bg-soft)}
+.rep-period b{display:block;font-size:15px}
+.rep-period span{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.rep-period.locked{cursor:not-allowed;opacity:.62}
+.rep-period.locked:hover{border-color:var(--line);background:#fff}
+.rep-lock{position:absolute;right:14px;top:14px;font-style:normal;font-size:11px;font-weight:700;color:var(--purple-d);background:var(--bg-soft);border-radius:999px;padding:3px 9px}
+.rep-err{margin-top:12px;font-size:13px;color:#B4232A;background:#FDECEC;border-radius:10px;padding:10px 12px}
+.rep-hint{margin-top:14px;font-size:12.5px;color:var(--muted)}
+.rep-up{display:inline-block;margin-top:12px;font-size:13px;font-weight:700;color:var(--purple-d)}
+.rep-up:hover{text-decoration:underline}
 
 /* Уважение к системной настройке «уменьшить движение»: гасим анимации и
    плавную прокрутку для пользователей с вестибулярными расстройствами. */

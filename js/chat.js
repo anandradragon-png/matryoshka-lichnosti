@@ -1,4 +1,5 @@
 import { escapeHtml } from './util.js';
+import { logChatLine, setChatTopic } from './chat-journal.js';
 import {
   EMOTION_GUIDE,
   PRACTICES,
@@ -53,6 +54,7 @@ async function botSayLive(text) {
     addMsg(escapeHtml(reply).replace(/\n/g, '<br>'));
     chatHistory.push({ role: 'user', text });
     chatHistory.push({ role: 'assistant', text: reply });
+    logChatLine('bot', reply);
   } catch (e) {
     t.remove();
     addMsg('Извините, не получилось получить ответ прямо сейчас. Попробуйте ещё раз чуть позже. 💜');
@@ -78,7 +80,7 @@ function typing() {
 function botSay(text, delay = 750) {
   return new Promise(res => {
     const t = typing();
-    setTimeout(() => { t.remove(); addMsg(text); res(); }, delay);
+    setTimeout(() => { t.remove(); addMsg(text); logChatLine('bot', text); res(); }, delay);
   });
 }
 function setQuick(options) {
@@ -86,7 +88,7 @@ function setQuick(options) {
   options.forEach(o => {
     const b = document.createElement('button');
     b.textContent = o.label;
-    b.onclick = () => { addMsg(o.label, 'user'); o.action(); };
+    b.onclick = () => { addMsg(o.label, 'user'); logChatLine('user', o.label); o.action(); };
     quickReplies.appendChild(b);
   });
 }
@@ -127,6 +129,7 @@ const flow = {
   async feel(state) {
     const g = EMOTION_GUIDE[state] || EMOTION_GUIDE['Спокойствие'];
     const rec = PRACTICES.find(p => p.cat === g.rec);
+    setChatTopic(state, rec ? rec.title : '');   // тема диалога для отчёта
     await botSay(g.text);
     await botSay(`Рекомендую практику «<b>${rec.title}</b>» из направления «${g.rec}» — это ${rec.time}. Хотите попробовать?`);
     setQuick([
@@ -164,6 +167,7 @@ function handleFreeText() {
   if (!v) return;
   // Экранируем ввод пользователя: addMsg вставляет через innerHTML, иначе XSS.
   addMsg(escapeHtml(v), 'user');
+  logChatLine('user', v);
   chatInput.value = '';
   const low = v.toLowerCase();
   // Безопасность: признаки кризиса — мягко направляем к живой помощи.

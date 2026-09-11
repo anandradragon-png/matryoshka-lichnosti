@@ -1,5 +1,6 @@
 import { ML_KEYS } from './core.js';
-import { escapeHtml, safeParse } from './util.js';
+import { escapeHtml, safeParse, dayKey } from './util.js';
+import { scopedKey } from './scope.js';
 
 /* ================= ОРГАНАЙЗЕР ЭМОЦИЙ ================= */
 /* Колесо эмоций Роберта Плутчика: 8 спектров, в каждом 3 эмоции по возрастанию
@@ -135,9 +136,10 @@ intensity.addEventListener('input', () => intensityVal.textContent = intensity.v
 sleep.addEventListener('input', () => sleepVal.textContent = sleep.value);
 energy.addEventListener('input', () => energyVal.textContent = energy.value);
 
-const STORE_KEY = ML_KEYS.diary;
-export const loadEntries = () => safeParse(localStorage.getItem(STORE_KEY), []);
-const saveEntries = e => localStorage.setItem(STORE_KEY, JSON.stringify(e));
+// Ключ считается каждый раз: он зависит от того, кто вошёл (js/scope.js).
+const storeKey = () => scopedKey(ML_KEYS.diary);
+export const loadEntries = () => safeParse(localStorage.getItem(storeKey()), []);
+const saveEntries = e => localStorage.setItem(storeKey(), JSON.stringify(e));
 // Список эмоций записи (совместимость: старый формат — одна эмоция, новый — массив)
 const entryEmotions = e => (Array.isArray(e.emotions) && e.emotions.length)
   ? e.emotions
@@ -146,8 +148,9 @@ const entryEmotions = e => (Array.isArray(e.emotions) && e.emotions.length)
 // в атрибут style. escapeHtml тут не спасёт: внутри style кавычка не нужна, чтобы
 // подставить чужие правила. Поэтому пропускаем только настоящий HEX-цвет.
 const DEFAULT_EMOTION_COLOR = '#8B5CF6';
-const safeColor = c => (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(String(c)) ? c : DEFAULT_EMOTION_COLOR);
+export const safeColor = c => (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(String(c)) ? c : DEFAULT_EMOTION_COLOR);
 export const entryNames = e => entryEmotions(e).map(x => x.name);
+export { entryEmotions };
 // Период аналитики: 'week' | 'month' | 'all'
 let statsPeriod = 'week';
 function periodEntries(entries) {
@@ -188,7 +191,6 @@ document.getElementById('saveEntry').addEventListener('click', () => {
 });
 
 /* ---- Стрик и прогресс по слоям матрёшки (движок удержания) ---- */
-const dayKey = ts => { const d = new Date(ts); return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(); };
 export function computeStreak(entries) {
   if (!entries.length) return 0;
   const days = new Set(entries.map(e => dayKey(e.date)));
@@ -226,7 +228,7 @@ function celebrate() {
 }
 
 /* ---- Инсайты: связь настроения со сном и энергией ---- */
-const NEG_NAMES = ['Тревога','Гнев','Грусть','Обида','Усталость','Страх','Ужас','Опасение','Горе','Задумчивость','Отвращение','Омерзение','Скука','Ярость','Досада'];
+export const NEG_NAMES = ['Тревога','Гнев','Грусть','Обида','Усталость','Страх','Ужас','Опасение','Горе','Задумчивость','Отвращение','Омерзение','Скука','Ярость','Досада'];
 function renderInsights(entries) {
   const box = document.getElementById('insights');
   if (entries.length < 3) {
@@ -298,16 +300,7 @@ function renderDiary() {
       <time>${dt}</time></div>`;
   }).join('');
 }
-/* ---- Экспорт/импорт дневника в JSON (данные остаются у пользователя) ---- */
-// Проверка одной записи из внешнего файла — это граница системы, доверять нельзя.
-function isValidEntry(e) {
-  if (!e || typeof e !== 'object') return false;
-  if (typeof e.date !== 'number' || !isFinite(e.date)) return false;
-  const hasArr = Array.isArray(e.emotions) && e.emotions.length &&
-    e.emotions.every(x => x && typeof x.name === 'string');
-  const hasLegacy = typeof e.emotion === 'string' && e.emotion;
-  return hasArr || hasLegacy;
-}
+/* ---- Экспорт дневника в JSON (резервная копия остаётся у человека) ---- */
 function exportDiary() {
   const entries = loadEntries();
   if (!entries.length) { alert('Дневник пуст — экспортировать нечего.'); return; }
@@ -325,43 +318,13 @@ function exportDiary() {
   a.remove();
   URL.revokeObjectURL(url);
 }
-function importDiary(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    let data;
-    try { data = JSON.parse(reader.result); }
-    catch { alert('Не удалось прочитать файл: это не корректный JSON.'); return; }
-    // Принимаем и «обёртку» {entries:[...]}, и голый массив записей.
-    const incoming = Array.isArray(data) ? data : (data && Array.isArray(data.entries) ? data.entries : null);
-    if (!incoming) { alert('В файле нет записей дневника.'); return; }
-    const valid = incoming.filter(isValidEntry);
-    if (!valid.length) { alert('В файле не нашлось ни одной корректной записи дневника.'); return; }
-    const current = loadEntries();
-    const seen = new Set(current.map(e => e.date));
-    const added = valid.filter(e => !seen.has(e.date));
-    if (!added.length) { alert('Все записи из файла уже есть в дневнике — ничего не добавлено.'); return; }
-    const merged = current.concat(added).sort((a, b) => a.date - b.date);
-    saveEntries(merged);
-    renderDiary();
-    alert(`Импортировано новых записей: ${added.length}. Всего в дневнике: ${merged.length}.`);
-  };
-  reader.onerror = () => alert('Не удалось прочитать файл.');
-  reader.readAsText(file);
-}
 (function initDiaryIO() {
   const exportBtn = document.getElementById('diaryExport');
-  const importBtn = document.getElementById('diaryImportBtn');
-  const importInput = document.getElementById('diaryImportInput');
   if (exportBtn) exportBtn.addEventListener('click', exportDiary);
-  if (importBtn && importInput) {
-    importBtn.addEventListener('click', () => importInput.click());
-    importInput.addEventListener('change', () => {
-      const file = importInput.files && importInput.files[0];
-      if (file) importDiary(file);
-      importInput.value = '';  // чтобы повторный выбор того же файла тоже срабатывал
-    });
-  }
 })();
+
+// Вошёл другой человек — на экране должен быть его дневник, а не предыдущего.
+document.addEventListener('ml:session', renderDiary);
 
 // Переключатель периода аналитики
 (function initPeriodToggle() {

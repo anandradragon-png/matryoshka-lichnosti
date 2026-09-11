@@ -1,4 +1,5 @@
 import { trapFocus } from './util.js';
+import { EVENT, logEvent, hasToday } from './journal.js';
 
 /* ================= ПРАКТИКИ =================
    Каждая практика: категория, иконка, название, краткое описание, время,
@@ -221,13 +222,38 @@ export function openPractice(p) {
     <h4 class="pm-steps-title">Как выполнять</h4>
     <ol class="pm-steps">${p.steps.map(s => `<li>${s}</li>`).join('')}</ol>
     <p class="pm-foot">Прожить эмоцию — значит дать ей завершиться. Будьте к себе бережны. 💜</p>
-    <a href="#organizer" class="btn btn-primary pm-diary" data-nav>Записать состояние в дневник</a>`;
+    <div class="pm-actions">
+      <button type="button" class="btn btn-primary pm-done">✓ Я прошёл практику</button>
+      <a href="#organizer" class="btn btn-outline pm-diary" data-nav>Записать состояние в дневник</a>
+    </div>`;
   box.querySelector('.pm-close').addEventListener('click', closePractice);
   box.querySelector('.pm-diary').addEventListener('click', closePractice);
+  bindPracticeDone(box.querySelector('.pm-done'), p);
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
   releaseFocusTrap = trapFocus(box); // ловушка фокуса + возврат при закрытии
 }
+/* Отметка «прошёл практику» → в журнал дня, оттуда практика попадает в отчёт.
+   В событие кладём название и описание целиком: отчёт за прошлый месяц должен
+   читаться и после того, как каталог практик изменится. */
+function bindPracticeDone(btn, p) {
+  if (!btn) return;
+  const done = () => {
+    // Кнопка гаснет — экранный диктор должен услышать, что отметка прошла.
+    btn.setAttribute('aria-live', 'polite');
+    btn.textContent = '✓ Отмечено в журнале дня';
+    btn.disabled = true;
+    btn.classList.add('pm-done--on');
+  };
+  if (hasToday(EVENT.practice, d => d.title === p.title)) { done(); return; }
+  btn.onclick = () => {
+    logEvent(EVENT.practice, {
+      title: p.title, cat: p.cat, icon: p.icon, time: p.time, desc: p.desc, when: p.when || '',
+    });
+    done();
+  };
+}
+
 function closePractice() {
   const modal = document.getElementById('practiceModal');
   if (modal) modal.classList.remove('open');

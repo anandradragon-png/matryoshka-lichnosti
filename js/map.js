@@ -1,3 +1,5 @@
+import { EVENT, logEvent, hasToday } from './journal.js';
+
 /* ================= КАРТА ЛИЧНОСТИ (Дары и Поля) ================= */
 (function initMap() {
   const chips = document.getElementById('fieldsChips');
@@ -113,5 +115,20 @@
         <a href="#pricing" class="btn btn-primary" data-nav>Раскрыть полную Карту личности</a>
       </div>`;
     document.getElementById('mapResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // В журнал дня — снимком, чтобы отчёт не пересчитывал Дар заново.
+    // Повторный расчёт того же Дара за день события не плодит.
+    if (!hasToday(EVENT.dar, d => d.code === r.code)) {
+      logEvent(EVENT.dar, {
+        code: r.code, darName: r.darName, darArch: r.darArch, kind: r.type,
+        fieldName: f.name, fieldTheme: f.theme, essence: f.essence,
+        aspects: ['ma', 'zhi', 'kun'].map(pos => ({
+          title: ASPECT_TITLES[pos], light: r.aspects[pos].light,
+          shadowTitle: ASPECT_SHADOWS[pos], shadow: r.aspects[pos].shadow,
+          role: r.aspects[pos].role, fieldName: r.aspects[pos].field.name,
+        })),
+        resource: f.resource ? { signs: f.resource.signs, steps: f.resource.steps } : null,
+        physics: f.physics ? { element: f.physics.element, body: f.physics.body, string: f.physics.string } : null,
+      });
+    }
   };
 })();

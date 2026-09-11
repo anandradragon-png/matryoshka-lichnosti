@@ -1,6 +1,8 @@
 import { ML_KEYS } from './core.js';
 import { escapeHtml, trapFocus, safeParse } from './util.js';
+import { announceSessionChange } from './scope.js';
 import { loadEntries, computeStreak, emotionColor, entryNames } from './organizer.js';
+import { getPlan, setPlan, nextPlan, PLAN_LABEL, planSwitcherHtml, bindPlanSwitcher } from './plan.js';
 
 /* ================= ЛИЧНЫЙ КАБИНЕТ (вход / регистрация) ================= */
 (function account() {
@@ -13,7 +15,13 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
   const loadUsers = () => safeParse(localStorage.getItem(USERS_KEY), []);
   const saveUsers = u => localStorage.setItem(USERS_KEY, JSON.stringify(u));
   const getSession = () => localStorage.getItem(SESSION_KEY) || '';
-  const setSession = login => login ? localStorage.setItem(SESSION_KEY, login) : localStorage.removeItem(SESSION_KEY);
+  // Сменился вошедший — сменились и данные на экране: дневник со статистикой
+  // принадлежат конкретному человеку (js/scope.js), их надо перерисовать.
+  const setSession = login => {
+    if (login) localStorage.setItem(SESSION_KEY, login);
+    else localStorage.removeItem(SESSION_KEY);
+    announceSessionChange();
+  };
   const findUser = login => loadUsers().find(u => u.login.toLowerCase() === String(login).trim().toLowerCase());
   const currentUser = () => findUser(getSession());
   const isAdmin = u => u && u.role === 'admin';
@@ -182,6 +190,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
         <div class="am-stat"><b>${level}/5</b><span>слой матрёшки</span></div>
       </div>
       <p class="am-last">Последняя отметка: <b>${last}</b></p>
+      ${planSwitcherHtml(u.login)}
       <div class="am-actions">
         <button class="btn btn-primary" data-go="#organizer">📔 Дневник эмоций</button>
         <button class="btn btn-outline" data-go="#map">🪆 Карта личности</button>
@@ -194,6 +203,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
       <button class="am-logout" id="logoutBtn">Выйти из кабинета</button>
     `);
     modal.querySelector('.am-close').onclick = closeModal;
+    bindPlanSwitcher(modal, showCabinet);   // демо-переключатель тарифа
     modal.querySelectorAll('[data-go]').forEach(b => b.onclick = () => {
       closeModal();
       const t = document.querySelector(b.dataset.go);
@@ -258,7 +268,8 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
     const freq = {};
     entries.forEach(e => entryNames(e).forEach(n => freq[n] = (freq[n] || 0) + 1));
     const topEmotions = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 5);
-    const premiumCount = users.filter(x => x.premium).length;
+    // Тариф читается из plan.js — единственного источника правды о доступе.
+    const paidCount = users.filter(x => getPlan(x.login) !== 'free').length;
     const clientUsers = users.filter(x => !isAdmin(x));
 
     openModal(`
@@ -275,7 +286,7 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
       <div class="am-stats adm-stats">
         <div class="am-stat"><b>${clientUsers.length}</b><span>пользователей</span></div>
         <div class="am-stat"><b>${entries.length}</b><span>записей настроения</span></div>
-        <div class="am-stat"><b>${premiumCount}</b><span>с доступом Premium</span></div>
+        <div class="am-stat"><b>${paidCount}</b><span>на платном тарифе</span></div>
       </div>
 
       <div class="adm-block">
@@ -292,9 +303,8 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
           ${clientUsers.length ? clientUsers.map(x => `
             <div class="adm-user">
               <span class="adm-uname">${escapeHtml(x.name || x.login)} <i class="muted">@${escapeHtml(x.login)}</i></span>
-              <button class="adm-grant ${x.premium ? 'on' : ''}" data-login="${escapeHtml(x.login)}">
-                ${x.premium ? '✓ Premium' : 'Выдать доступ'}
-              </button>
+              <button class="adm-grant ${getPlan(x.login) !== 'free' ? 'on' : ''}" data-login="${escapeHtml(x.login)}"
+                title="Нажмите, чтобы сменить тариф">${PLAN_LABEL[getPlan(x.login)]}</button>
             </div>`).join('') : '<span class="muted">Зарегистрированных пользователей пока нет</span>'}
         </div>
       </div>
@@ -323,11 +333,11 @@ import { loadEntries, computeStreak, emotionColor, entryNames } from './organize
     `);
     modal.querySelector('.am-close').onclick = closeModal;
     modal.querySelector('#backCab').onclick = () => showCabinet();
-    // Выдача/снятие Premium-доступа
+    // Смена тарифа по кругу: Базовая → Стандартная → Премиум → Базовая
     modal.querySelectorAll('.adm-grant').forEach(b => b.onclick = () => {
-      const list = loadUsers();
-      const target = list.find(x => x.login === b.dataset.login);
-      if (target) { target.premium = !target.premium; saveUsers(list); showAdminPanel(); }
+      const login = b.dataset.login;
+      setPlan(nextPlan(getPlan(login)), login);
+      showAdminPanel();
     });
     // Генерация промокода
     modal.querySelector('#newPromo').onclick = () => {

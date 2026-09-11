@@ -1,0 +1,111 @@
+/* ================= СТИЛИ ОТЧЁТА (отдельный документ) =================
+   Подключается ТОЛЬКО в документе отчёта, который открывается в новой
+   вкладке (js/report/document.js). Классы приложения здесь не используются:
+   отчёт не должен ломаться от правок styles.css, а styles.css — от правок здесь.
+
+   Документ светлый: отчёт печатают и сохраняют в PDF, тёмный фон съел бы
+   картридж и выглядел бы грязно на бумаге. Палитра — брендовая, из styles.css. */
+:root{
+  --r-purple:#7C3AED; --r-purple-soft:#F7F5FF;
+  --r-ink:#1F2233; --r-muted:#5E6279; --r-line:#E6E2F2;
+  --r-font:'Manrope',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--r-font);color:var(--r-ink);background:#F2F0F7;line-height:1.55;-webkit-font-smoothing:antialiased}
+
+/* Полоса с кнопкой печати — только для экрана */
+.r-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:12px 18px;background:#fff;border-bottom:1px solid var(--r-line)}
+.r-bar__btn{font:inherit;font-weight:700;font-size:15px;padding:11px 22px;border:0;border-radius:999px;cursor:pointer;
+  color:#fff;background:linear-gradient(135deg,#8B5CF6,#EC4899);box-shadow:0 6px 18px rgba(139,92,246,.3)}
+@media (prefers-reduced-motion:no-preference){.r-bar__btn:hover{transform:translateY(-1px)}}
+.r-bar__hint{font-size:13px;color:var(--r-muted)}
+
+/* Документ: ширина листа A4 с полями. Отступ сверху — запас под липкую полосу
+   с кнопкой печати: на узком экране её подпись переносится и полоса вырастает,
+   без запаса она накрывала бы заголовок отчёта. В печати полосы нет. */
+.r-doc{width:min(760px,100%);margin:0 auto;padding:72px 22px 60px;background:#fff}
+
+/* Титул */
+.r-cover{text-align:center;padding:34px 0 30px;border-bottom:2px solid var(--r-line);margin-bottom:26px}
+.r-doll{font-size:44px;line-height:1}
+.r-brand{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--r-purple);margin-top:8px}
+.r-title{font-size:30px;line-height:1.15;margin-top:10px}
+.r-date{font-size:16px;color:var(--r-muted);margin-top:6px}
+.r-who{font-size:17px;font-weight:700;margin-top:12px}
+.r-plan{display:inline-block;margin-top:12px;padding:5px 14px;border-radius:999px;
+  font-size:13px;font-weight:600;color:var(--r-purple);background:var(--r-purple-soft)}
+
+/* Вдохновляющая строка короткого отчёта */
+.r-inspire{padding:18px 20px;margin-bottom:24px;border-radius:16px;background:var(--r-purple-soft);
+  border-left:4px solid var(--r-purple)}
+.r-inspire p{font-size:16px}
+
+/* Раздел */
+.r-block{margin-bottom:30px;break-inside:avoid}
+.r-block h2{font-size:21px;padding-bottom:8px;margin-bottom:14px;border-bottom:1px solid var(--r-line)}
+.r-block h3{font-size:17px;margin-bottom:4px}
+.r-block h4{font-size:15px;margin-bottom:4px}
+.r-block p+p{margin-top:7px}
+.r-lead{font-size:15.5px}
+.r-muted{color:var(--r-muted);font-size:14px}
+.r-empty{color:var(--r-muted);font-size:14.5px;padding:14px 16px;border-radius:12px;background:#FAF9FD}
+.r-nowrap{white-space:nowrap}
+.r-center{text-align:center}
+
+/* Цифры */
+.r-figures{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.r-figure{flex:1 1 120px;padding:12px 14px;border-radius:14px;background:var(--r-purple-soft);text-align:center}
+.r-figure b{display:block;font-size:24px;line-height:1.1;color:var(--r-purple)}
+.r-figure span{font-size:12px;color:var(--r-muted)}
+
+/* Таблица */
+.r-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:12px}
+.r-table th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--r-muted);
+  padding:8px 8px;border-bottom:1.5px solid var(--r-line)}
+.r-table td{padding:9px 8px;border-bottom:1px solid var(--r-line);vertical-align:top}
+.r-table tr{break-inside:avoid}
+.r-tag{display:inline-block;padding:2px 9px;margin:1px 2px 1px 0;border-radius:999px;
+  font-size:12.5px;font-weight:600;border:1.5px solid var(--r-line)}
+.r-tag--comp{border-style:dashed;color:var(--r-purple)}
+
+/* Практика, грань характера, диалог */
+.r-practice,.r-aspect,.r-chat{padding:14px 16px;margin-top:12px;border-radius:14px;
+  background:#FAF9FD;border-left:3px solid var(--r-line);break-inside:avoid}
+.r-aspect--res{border-left-color:var(--r-purple);background:var(--r-purple-soft)}
+.r-practice-meta{font-size:12.5px;color:var(--r-muted);margin-bottom:7px}
+.r-chat-head{font-size:13.5px;color:var(--r-muted)}
+.r-chat-said{margin:8px 0 6px 18px;font-size:14.5px}
+.r-chat-said li{margin-bottom:3px}
+
+/* Дар */
+.r-dar-head{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.r-dar-code{font-size:22px;font-weight:800;letter-spacing:.06em;color:var(--r-purple);
+  padding:10px 16px;border-radius:14px;background:var(--r-purple-soft);white-space:nowrap}
+.r-phys{margin-top:12px}
+
+/* Списки */
+.r-insights,.r-list{margin-left:20px;font-size:15px}
+.r-insights li,.r-list li{margin-bottom:7px}
+
+/* Что откроется на платном тарифе */
+.r-locked{padding:18px 20px;margin-bottom:30px;border-radius:16px;background:var(--r-purple-soft);border:1px dashed var(--r-purple)}
+.r-locked h2{border-bottom:0;margin-bottom:10px}
+
+/* Подвал */
+.r-foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--r-line);
+  font-size:12px;color:var(--r-muted)}
+.r-foot p+p{margin-top:6px}
+
+/* ---- Печать ---- */
+@page{size:A4;margin:16mm 14mm}
+@media print{
+  body{background:#fff}
+  .r-bar{display:none}
+  .r-doc{width:auto;padding:0}
+  .r-cover{padding-top:0;break-after:page}
+  .r-figure,.r-inspire,.r-locked,.r-practice,.r-aspect,.r-chat,.r-empty{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .r-block h2{break-after:avoid}
+  a{text-decoration:none;color:inherit}
+}

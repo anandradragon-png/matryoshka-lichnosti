@@ -37,7 +37,7 @@
         <a href="#map" data-nav>Карта личности</a>
         <a href="#practices" data-nav>Практики</a>
         <a href="#tests" data-nav>Тесты</a>
-        <a href="https://anandradragon-png.github.io/yuplab-site/" class="nav-yuplab" target="_blank" rel="noopener" title="Продукты Юплаб — управляй собой на всех уровнях, будь автономен">Продукты Юплаб</a>
+        <a href="https://yuplab-krasnodar.ru" class="nav-yuplab" target="_blank" rel="noopener" title="Продукты Юплаб — управляй собой на всех уровнях, будь автономен">Продукты Юплаб</a>
         <a href="#company" class="nav-corp" data-nav>Для компании</a>
         <a href="#pricing" data-nav>Тарифы</a>
       </nav>
@@ -301,7 +301,7 @@
           <textarea id="diaryNote" rows="3" placeholder="Что произошло? Какая мысль возникла?"></textarea>
         </label>
         <div class="intensity">
-          <span>Интенсивность</span>
+          <label for="intensity">Насколько сильно это чувствовалось</label>
           <input type="range" id="intensity" min="1" max="10" value="5" />
           <b id="intensityVal">5</b>
         </div>
@@ -330,11 +330,13 @@
         <div class="chart" id="chart"><p class="chart-empty">Пока нет записей. Отметьте своё состояние — и здесь появится статистика.</p></div>
         <div class="insights" id="insights"></div>
         <div class="log" id="diaryLog"></div>
+        <div class="report-cta">
+          <button class="btn btn-primary report-cta__btn" id="reportBtn" type="button">⬇ Скачать отчёт в PDF</button>
+          <p class="report-cta__hint">Настроение, практики, разговоры с ассистентом и ваш Дар — одним документом. Каждый день.</p>
+        </div>
         <div class="diary-io">
           <button class="diary-io__btn" id="diaryExport" type="button">⬇ Экспорт дневника</button>
-          <button class="diary-io__btn" id="diaryImportBtn" type="button">⬆ Импорт</button>
-          <input type="file" id="diaryImportInput" accept="application/json,.json" hidden />
-          <p class="diary-io__hint">Сохраните записи в файл на своё устройство или перенесите их между браузерами. Данные остаются только у вас.</p>
+          <p class="diary-io__hint">Резервная копия в JSON — служебный файл, для чтения есть отчёт.</p>
         </div>
       </div>
     </div>
@@ -572,6 +574,16 @@
     <a href="#bot" class="btn btn-primary btn-lg" data-nav>Начать бесплатно</a>
   </div>
 </section>
+
+<!-- ======= ЭКОСИСТЕМА: ссылки на соседние сайты группы ======= -->
+<div class="ecosystem-bar">
+  <div class="container ecosystem-bar__inner">
+    <span class="ecosystem-bar__label">Другие проекты группы</span>
+    <a class="ecosystem-bar__link" href="https://yup-lab.ru" target="_blank" rel="noopener">ЮПЛАБ — группа компаний</a>
+    <span class="ecosystem-bar__sep" aria-hidden="true">·</span>
+    <a class="ecosystem-bar__link" href="https://yuplab-krasnodar.ru" target="_blank" rel="noopener">Вода и напитки ЮПЛАБ</a>
+  </div>
+</div>
 
 <!-- ======= FOOTER ======= -->
 <footer class="site-footer">

@@ -128,47 +128,17 @@ describe('smoke', () => {
     vi.unstubAllGlobals();
   });
 
-  test('импорт дневника: валидные записи добавляются, дубли и мусор отсеиваются', async () => {
-    // Одна запись уже в дневнике — она не должна задублироваться при импорте.
-    const existing = { emotions: [{ name: 'Радость', color: '#FBBF24' }], emotion: 'Радость', intensity: 5, date: 1000 };
-    localStorage.setItem('ml_diary', JSON.stringify([existing]));
-    const importInput = document.getElementById('diaryImportInput');
-    expect(importInput, 'нет input импорта').toBeTruthy();
-    const fileJson = JSON.stringify({
-      app: 'matryoshka', kind: 'diary', version: 1,
-      entries: [
-        existing, // дубль по date=1000 → игнор
-        { emotions: [{ name: 'Грусть', color: '#6366F1' }], emotion: 'Грусть', intensity: 7, date: 2000 }, // новая
-        { emotion: 'Гнев', intensity: 3, date: 3000 }, // старый формат — тоже валидна
-        { note: 'без даты и эмоций' }, // мусор → отсев
-      ],
-    });
-    const file = new File([fileJson], 'd.json', { type: 'application/json' });
-    Object.defineProperty(importInput, 'files', { value: [file], configurable: true });
-    importInput.dispatchEvent(new Event('change'));
-    await sleep(50); // FileReader асинхронный
-    const saved = JSON.parse(localStorage.getItem('ml_diary'));
-    expect(saved.length).toBe(3); // было 1 + 2 новых
-    expect(saved.map(e => e.date)).toEqual([1000, 2000, 3000]); // отсортировано по дате
-  });
-
-  test('импорт дневника: враждебные имя и цвет не оживают в разметке (XSS)', async () => {
-    // Файл импорта — граница системы. isValidEntry проверяет только тип поля,
-    // поэтому имя и цвет могут прийти любыми. Имя идёт в текст, цвет — в атрибут
-    // style: там кавычка позволяет дописать свой атрибут, escapeHtml не спасает.
-    const importInput = document.getElementById('diaryImportInput');
-    const fileJson = JSON.stringify({
-      app: 'matryoshka', kind: 'diary', version: 1,
-      entries: [{
-        date: Date.now(), // в текущем периоде статистики, иначе запись не попадёт в лог
-        intensity: 5,
-        emotions: [{ name: '<img src=x onerror=alert(1)>', color: 'red" onmouseover="alert(1)' }],
-      }],
-    });
-    const file = new File([fileJson], 'evil.json', { type: 'application/json' });
-    Object.defineProperty(importInput, 'files', { value: [file], configurable: true });
-    importInput.dispatchEvent(new Event('change'));
-    await sleep(50); // FileReader асинхронный
+  test('дневник: враждебные имя и цвет не оживают в разметке (XSS)', async () => {
+    // Хранилище — граница системы: его правят руками, туда попадают старые
+    // резервные копии. Имя эмоции идёт в текст, цвет — в атрибут style: там
+    // кавычка позволяет дописать свой атрибут, escapeHtml не спасает.
+    localStorage.setItem('ml_diary', JSON.stringify([{
+      date: Date.now(), // в текущем периоде статистики, иначе запись не попадёт в лог
+      intensity: 5,
+      emotions: [{ name: '<img src=x onerror=alert(1)>', color: 'red" onmouseover="alert(1)' }],
+    }]));
+    document.dispatchEvent(new CustomEvent('ml:session')); // перерисовать дневник
+    await sleep(20);
 
     const log = document.getElementById('diaryLog');
     expect(log.querySelectorAll('img').length).toBe(0); // тег остался текстом
