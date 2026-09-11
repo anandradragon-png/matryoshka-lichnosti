@@ -1,0 +1,85 @@
+name: Выкатка на домен
+
+# Кладёт сайт на боевой адрес matreshka-lichnosti.ru.
+# Домен отдаётся из бакета Object Storage в Яндекс Облаке (облако yuplab,
+# папка default) — GitHub Pages его НЕ кормит, это два разных источника.
+# Без этой выкатки пуш доезжает только до github.io, а на домене остаётся
+# старая версия.
+#
+# Запускается только после зелёного CI: на боевой адрес не должно попасть то,
+# что не прошло линтер и тесты.
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-domain
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      BUCKET: matreshka-lichnosti.ru
+      CDN_RESOURCE: bc8rxhacqrndh7romhkr
+      FOLDER_ID: b1gdupjv9cfla21gilcm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # Синхронизация, а не докладывание: удалённый в репозитории файл должен
+      # исчезнуть и на сайте. Исключаем всё, что относится к разработке, —
+      # в бакет попадает только то, что открывает посетитель.
+      - name: Залить сайт в бакет
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.YC_S3_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_S3_SECRET }}
+          AWS_DEFAULT_REGION: ru-central1
+        run: |
+          aws s3 sync . "s3://$BUCKET" \
+            --endpoint-url=https://storage.yandexcloud.net \
+            --delete \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "node_modules/*" \
+            --exclude "test/*" \
+            --exclude "*.md" \
+            --exclude "package.json" \
+            --exclude "package-lock.json" \
+            --exclude "eslint.config.js" \
+            --exclude "vitest.config.js" \
+            --exclude ".prettierrc.json" \
+            --exclude ".gitignore" \
+            --exclude ".claude/*"
+
+      # Перед сайтом стоит CDN с суточным кэшем: без сброса посетитель до
+      # 24 часов видел бы старую версию, хотя в бакете уже новая.
+      - name: Сбросить кэш CDN
+        run: |
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh \
+            | bash -s -- -i "$HOME/yc" -n
+          echo '${{ secrets.YC_SA_KEY }}' > "$HOME/sa.json"
+          "$HOME/yc/bin/yc" config set service-account-key "$HOME/sa.json"
+          "$HOME/yc/bin/yc" cdn cache purge \
+            --resource-id "$CDN_RESOURCE" --folder-id "$FOLDER_ID" --all
+          rm -f "$HOME/sa.json"
+
+      # Сверяем не «есть ли нужное слово», а совпадение файла целиком: проверка
+      # не должна протухнуть вместе с очередной вёрсткой.
+      - name: Проверить, что домен отдаёт свежую версию
+        run: |
+          sleep 20
+          LOCAL=$(md5sum index.html | cut -d' ' -f1)
+          LIVE=$(curl -sS "https://$BUCKET/?ci=${{ github.run_id }}" | md5sum | cut -d' ' -f1)
+          if [ "$LOCAL" = "$LIVE" ]; then
+            echo "Домен отдаёт ту же версию, что в репозитории"
+          else
+            echo "Домен отдаёт другую версию: в репозитории $LOCAL, на сайте $LIVE"
+            exit 1
+          fi

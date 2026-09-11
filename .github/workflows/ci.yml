@@ -14,6 +14,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm ci
+      # npm install, а не npm ci: замок собирается на Windows, а проверка идёт
+      # на Linux, и платформенные зависимости в замок не попадают. Строгий
+      # npm ci из-за этого падал до линтера и тестов.
+      - run: npm install --no-audit --no-fund
       - run: npm run lint
       - run: npm test
