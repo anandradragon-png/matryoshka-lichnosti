@@ -1,12 +1,7 @@
 import { escapeHtml } from './util.js';
 import { logChatLine, setChatTopic } from './chat-journal.js';
-import {
-  EMOTION_GUIDE,
-  PRACTICES,
-  openPractice,
-  scrollToPractices,
-  filterPractices,
-} from './practices.js';
+import { EMOTION_GUIDE, PRACTICES } from './practices-data.js';
+import { openPractice, scrollToPractices, filterPractices } from './practices.js';
 
 /* ================= ЧАТ-БОТ ================= */
 /* URL серверной функции-прослойки YandexGPT (Yandex Cloud Function).
