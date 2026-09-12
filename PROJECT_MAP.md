@@ -30,7 +30,8 @@
 | `js/report/data.js` | `collectReport(period)` — сбор данных для отчёта |
 | `js/report/sections.js` | Вёрстка секций отчёта |
 | `js/report/document.js` | Сборка HTML-документа отчёта |
-| `js/report/launcher.js` | Открытие отчёта в новой вкладке |
+| `js/report/print.js` | Печать отчёта через скрытую рамку (минуя блокировщик всплывающих окон) |
+| `js/report/launcher.js` | Кнопка отчёта и выбор периода |
 | `docs/` | HTML-черновики юридических политик (152-ФЗ) |
 
 ## Тесты (`test/`)
@@ -43,6 +44,7 @@
 | `test/plan.test.js` | `plan.js`: planAllows (эскалация прав), getPlan/setPlan, мутационная проверка |
 | `test/chat-journal.test.js` | `chat-journal.js`: флаг userSpoke, одно событие на диалог, лимит 6 строк |
 | `test/report-data.test.js` | `report/data.js`: пустые данные (нет NaN), weeklyTrend с выравниванием |
+| `test/lead.test.js` | `lead.js`: телефон обязателен, проверка номера, номер попадает в письмо |
 | `test/helpers/boot.js` | Хелпер: `freshEnv()`, `bootDomModules()` — общая инициализация |
 
 ## Ключи localStorage (все через `ML_KEYS` в `js/core.js`)

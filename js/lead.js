@@ -30,8 +30,8 @@ function buildModal() {
         <label>E-mail<span>*</span>
           <input name="email" type="email" required autocomplete="email" placeholder="you@company.ru" />
         </label>
-        <label>Телефон
-          <input name="phone" type="tel" autocomplete="tel" placeholder="Необязательно" />
+        <label>Телефон<span>*</span>
+          <input name="phone" type="tel" required autocomplete="tel" placeholder="+7 900 000-00-00" />
         </label>
         <label>Комментарий
           <textarea name="comment" rows="3" placeholder="Размер команды, задачи, сроки — что важно учесть"></textarea>
@@ -57,22 +57,28 @@ function onSubmit(e) {
   const name = (data.name || '').trim();
   const company = (data.company || '').trim();
   const email = (data.email || '').trim();
+  const phone = (data.phone || '').trim();
 
-  if (!name || !company || !email) {
-    return showErr(err, 'Заполните имя, компанию и e-mail.');
+  if (!name || !company || !email || !phone) {
+    return showErr(err, 'Заполните имя, компанию, e-mail и телефон.');
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return showErr(err, 'Проверьте формат e-mail.');
   }
+  // Телефон пишут как привыкли: со скобками, плюсом, пробелами и дефисами.
+  // Придираемся только к количеству цифр — 10 (без кода страны) или 11.
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length < 10 || digits.length > 15) {
+    return showErr(err, 'Проверьте номер телефона — в нём должно быть не меньше 10 цифр.');
+  }
   err.hidden = true;
 
-  const phone = (data.phone || '').trim();
   const comment = (data.comment || '').trim();
   const bodyLines = [
     `Имя: ${name}`,
     `Компания: ${company}`,
     `E-mail: ${email}`,
-    phone ? `Телефон: ${phone}` : null,
+    `Телефон: ${phone}`,
     '',
     comment ? `Комментарий:\n${comment}` : 'Комментарий: —',
     '',

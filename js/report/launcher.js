@@ -5,7 +5,7 @@
 import { trapFocus } from '../util.js';
 import { getPlan, PLAN_LABEL, planAllows } from '../plan.js';
 import { PERIODS } from './data.js';
-import { openReport } from './document.js';
+import { printReport } from './print.js';
 
 const PERIOD_TITLE = { day: 'За сегодня', week: 'За неделю', month: 'За месяц' };
 const PERIOD_NOTE = {
@@ -55,7 +55,7 @@ function open() {
         </button>`).join('')}
     </div>
     <p class="rep-err" id="repErr" hidden></p>
-    <p class="rep-hint">Отчёт откроется в новой вкладке — там кнопка «Сохранить в PDF».</p>
+    <p class="rep-hint">Откроется окно печати — выберите «Сохранить в PDF».</p>
     ${plan === 'premium' ? '' : '<a href="#pricing" class="rep-up" data-nav>Посмотреть тарифы →</a>'}`;
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -65,12 +65,18 @@ function open() {
   const up = box.querySelector('.rep-up');
   if (up) up.onclick = close;
   box.querySelectorAll('[data-period]').forEach(b => {
-    b.onclick = () => {
-      // openReport вызывается прямо из клика — иначе браузер решит,
-      // что вкладка всплывающая, и молча её заблокирует.
-      if (openReport(b.dataset.period)) { close(); return; }
+    b.onclick = async () => {
+      // Сборка занимает мгновение, но кнопка обязана отозваться сразу:
+      // молчащая кнопка — то же самое, что сломанная.
+      const label = b.innerHTML;
+      b.disabled = true;
+      b.innerHTML = '<b>Готовлю отчёт…</b>';
+      const ok = await printReport(b.dataset.period);
+      b.disabled = false;
+      b.innerHTML = label;
+      if (ok) { close(); return; }
       const err = box.querySelector('#repErr');
-      err.textContent = 'Браузер не дал открыть новую вкладку. Разрешите всплывающие окна для этого сайта и попробуйте ещё раз.';
+      err.textContent = 'Не получилось собрать отчёт. Обновите страницу и попробуйте ещё раз.';
       err.hidden = false;
     };
   });
