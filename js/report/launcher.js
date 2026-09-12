@@ -1,9 +1,13 @@
 /* ================= ОТЧЁТ: КНОПКА И ВЫБОР ПЕРИОДА =================
    Кнопка живёт в органайзере, рядом с экспортом дневника. Перед сборкой
    спрашиваем период: за сегодня доступно всем и каждый день, неделя и месяц —
-   на платных тарифах. */
+   на платных тарифах.
+
+   Разделы отчёта одинаковые на всех тарифах, поэтому здесь честно называем
+   единственную настоящую разницу — глубину разбора и объём в страницах. */
 import { trapFocus } from '../util.js';
 import { getPlan, PLAN_LABEL, planAllows } from '../plan.js';
+import { depthFor, DEPTH_LABEL, DEPTH_PAGES, deeperThan } from './depth.js';
 import { PERIODS } from './data.js';
 import { printReport } from './print.js';
 
@@ -40,12 +44,17 @@ function close() {
 function open() {
   ensureModal();
   const plan = getPlan();
+  const depth = depthFor(plan);
+  const next = deeperThan(depth);
   const allowed = p => (p === 'day' ? planAllows('report.day', plan) : planAllows('report.period', plan));
   const box = modal.querySelector('.rep-box');
   box.innerHTML = `
     <button class="rep-close" aria-label="Закрыть">×</button>
     <h3 class="rep-title">Отчёт в PDF</h3>
-    <p class="rep-sub">Соберём всё, что вы делали: настроение, практики, разговоры с ассистентом и ваш Дар. Ваш тариф — ${PLAN_LABEL[plan]}.</p>
+    <p class="rep-sub">В отчёте будет всё: настроение, что заметно в ваших данных, практики, ваш Дар, разговоры с ассистентом и что делать дальше.</p>
+    <p class="rep-depth">Тариф «${PLAN_LABEL[plan]}» — ${DEPTH_LABEL[depth]}, примерно ${DEPTH_PAGES[depth]}.${next
+      ? ` На следующем тарифе те же разделы разобраны подробнее: ${next.pages}.`
+      : ''}</p>
     <div class="rep-periods">
       ${Object.keys(PERIODS).map(p => `
         <button type="button" class="rep-period${allowed(p) ? '' : ' locked'}" data-period="${p}" ${allowed(p) ? '' : 'disabled'}>

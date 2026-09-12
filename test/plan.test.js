@@ -14,39 +14,31 @@ describe('plan: planAllows — защита от эскалации прав', (
     expect(planAllows('', 'premium')).toBe(false);
   });
 
-  test('free не получает standard-блок', async () => {
+  test('free не получает отчёт за неделю и месяц', async () => {
     const { planAllows } = await import('../js/plan.js');
     expect(planAllows('report.period', 'free')).toBe(false);
-    expect(planAllows('report.insights', 'free')).toBe(false);
-    expect(planAllows('report.dar', 'free')).toBe(false);
   });
 
-  test('free не получает premium-блок', async () => {
+  test('платные тарифы получают отчёт за период', async () => {
     const { planAllows } = await import('../js/plan.js');
-    expect(planAllows('report.darFull', 'free')).toBe(false);
-    expect(planAllows('report.trends', 'free')).toBe(false);
-  });
-
-  test('standard не получает premium-блок', async () => {
-    const { planAllows } = await import('../js/plan.js');
-    expect(planAllows('report.darFull', 'standard')).toBe(false);
-    expect(planAllows('report.practiceHistory', 'standard')).toBe(false);
-  });
-
-  test('premium получает все известные возможности', async () => {
-    const { planAllows } = await import('../js/plan.js');
-    const all = [
-      'report.day', 'report.period', 'report.insights', 'report.dar',
-      'report.chat', 'report.darFull', 'report.practiceHistory', 'report.trends',
-    ];
-    for (const f of all) {
-      expect(planAllows(f, 'premium'), `premium должен иметь ${f}`).toBe(true);
-    }
+    expect(planAllows('report.period', 'standard')).toBe(true);
+    expect(planAllows('report.period', 'premium')).toBe(true);
   });
 
   test('free получает report.day', async () => {
     const { planAllows } = await import('../js/plan.js');
     expect(planAllows('report.day', 'free')).toBe(true);
+  });
+
+  /* Разделы отчёта больше НЕ раздаются по тарифу: раздел получает каждый,
+     тариф решает только глубину. Если кто-то вернёт сюда флаг вида
+     'report.dar', этот тест упадёт и напомнит, что решение живёт в depth.js. */
+  test('разделы отчёта тарифом не раздаются', async () => {
+    const { planAllows } = await import('../js/plan.js');
+    ['report.dar', 'report.insights', 'report.chat', 'report.trends',
+      'report.darFull', 'report.practiceHistory'].forEach(f => {
+      expect(planAllows(f, 'premium'), `${f} должен решаться глубиной, а не тарифом`).toBe(false);
+    });
   });
 
   test('тариф-мусор приравнивается к бесплатному, а не к «ничего»', async () => {
@@ -55,7 +47,7 @@ describe('plan: planAllows — защита от эскалации прав', (
     const { planAllows } = await import('../js/plan.js');
     expect(planAllows('report.day', 'unknown_plan')).toBe(true);
     expect(planAllows('report.period', 'enterprise')).toBe(false);
-    expect(planAllows('report.trends', 'PREMIUM')).toBe(false);
+    expect(planAllows('report.period', 'PREMIUM')).toBe(false);
   });
 });
 

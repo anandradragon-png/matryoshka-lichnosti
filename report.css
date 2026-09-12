@@ -35,17 +35,29 @@ body{font-family:var(--r-font);color:var(--r-ink);background:#F2F0F7;line-height
 .r-who{font-size:17px;font-weight:700;margin-top:12px}
 .r-plan{display:inline-block;margin-top:12px;padding:5px 14px;border-radius:999px;
   font-size:13px;font-weight:600;color:var(--r-purple);background:var(--r-purple-soft)}
+/* Из чего отчёт собран: сколько отметок, практик, разговоров */
+.r-cover-sum{font-size:14px;color:var(--r-muted);margin-top:10px;letter-spacing:.01em}
 
 /* Вдохновляющая строка короткого отчёта */
 .r-inspire{padding:18px 20px;margin-bottom:24px;border-radius:16px;background:var(--r-purple-soft);
   border-left:4px solid var(--r-purple)}
 .r-inspire p{font-size:16px}
 
-/* Раздел */
-.r-block{margin-bottom:30px;break-inside:avoid}
+/* Приглашение разобрать те же разделы глубже */
+.r-deeper{padding:20px 22px;margin-bottom:30px;border-radius:16px;
+  background:#F3F0FF;border:1.5px solid var(--r-purple);break-inside:avoid}
+.r-deeper h2{font-size:18px;border-bottom:0;margin-bottom:8px;color:var(--r-purple)}
+.r-deeper .r-lead{margin-bottom:10px}
+.r-deeper .r-muted{margin-top:10px;font-size:13px}
+
+/* Раздел. break-inside на самом разделе НЕ ставим: полный разбор даёт
+   блоки на несколько страниц, и запрет разрыва либо игнорируется браузером,
+   либо оставляет пустые половины страниц. Разрыв запрещаем точечно —
+   на карточках, ниже и в @media print. */
+.r-block{margin-bottom:30px}
 .r-block h2{font-size:21px;padding-bottom:8px;margin-bottom:14px;border-bottom:1px solid var(--r-line)}
-.r-block h3{font-size:17px;margin-bottom:4px}
-.r-block h4{font-size:15px;margin-bottom:4px}
+.r-block h3{font-size:17px;margin:18px 0 6px}
+.r-block h4{font-size:15px;font-weight:600;margin:12px 0 4px}
 .r-block p+p{margin-top:7px}
 .r-lead{font-size:15.5px}
 .r-muted{color:var(--r-muted);font-size:14px}
@@ -78,6 +90,31 @@ body{font-family:var(--r-font);color:var(--r-ink);background:#F2F0F7;line-height
 .r-chat-said{margin:8px 0 6px 18px;font-size:14.5px}
 .r-chat-said li{margin-bottom:3px}
 
+/* Заметки дневника словами самого человека. Это самое личное место отчёта,
+   поэтому не список, а цитата: её видно как чужую прямую речь. */
+.r-notes{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.r-note{margin:0;padding:12px 16px;border-radius:12px;
+  background:#FAF9FD;border-left:3px solid var(--r-purple);break-inside:avoid}
+.r-note p{font-size:15px;line-height:1.55;font-style:italic;color:var(--r-ink)}
+.r-note cite{display:block;margin-top:6px;font-size:12.5px;font-style:normal;color:var(--r-muted)}
+
+/* Шаги практики. На полном разборе отчёт печатают и делают по нему,
+   поэтому номер шага должен быть заметен с расстояния вытянутой руки. */
+.r-steps{margin:10px 0 0 0;padding-left:22px;font-size:14.5px;line-height:1.6;color:var(--r-ink)}
+.r-steps li{margin-bottom:7px;padding-left:4px}
+.r-steps li::marker{font-weight:700;color:var(--r-purple)}
+
+/* Что делать дальше */
+.r-advice{padding:16px 18px;margin-top:14px;border-radius:14px;
+  background:#FAF9FD;border-left:3px solid var(--r-line);break-inside:avoid}
+.r-advice h3{font-size:16px;margin:0 0 6px;color:var(--r-ink)}
+.r-advice .r-muted{margin-top:6px;font-size:13.5px}
+.r-advice-practice{margin-top:12px;padding:12px 14px;border-radius:10px;
+  background:#fff;border:1px solid var(--r-line);break-inside:avoid}
+.r-advice-practice h4{font-size:14.5px;margin:0 0 5px}
+.r-advice-practice p{font-size:14px;line-height:1.5}
+.r-advice-practice .r-muted{font-size:13px}
+
 /* Дар */
 .r-dar-head{display:flex;align-items:center;gap:16px;margin-bottom:12px}
 .r-dar-code{font-size:22px;font-weight:800;letter-spacing:.06em;color:var(--r-purple);
@@ -87,10 +124,6 @@ body{font-family:var(--r-font);color:var(--r-ink);background:#F2F0F7;line-height
 /* Списки */
 .r-insights,.r-list{margin-left:20px;font-size:15px}
 .r-insights li,.r-list li{margin-bottom:7px}
-
-/* Что откроется на платном тарифе */
-.r-locked{padding:18px 20px;margin-bottom:30px;border-radius:16px;background:var(--r-purple-soft);border:1px dashed var(--r-purple)}
-.r-locked h2{border-bottom:0;margin-bottom:10px}
 
 /* Подвал */
 .r-foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--r-line);
@@ -103,9 +136,20 @@ body{font-family:var(--r-font);color:var(--r-ink);background:#F2F0F7;line-height
   body{background:#fff}
   .r-bar{display:none}
   .r-doc{width:auto;padding:0}
-  .r-cover{padding-top:0;break-after:page}
-  .r-figure,.r-inspire,.r-locked,.r-practice,.r-aspect,.r-chat,.r-empty{
+  /* Титул НЕ занимает страницу целиком. В кратком отчёте это съедало половину
+     документа: лист с одним заголовком и лист с содержанием. Теперь титул —
+     шапка первой страницы, и каждый тариф укладывается в обещанный объём. */
+  .r-cover{padding-top:0}
+  .r-figure,.r-inspire,.r-deeper,.r-practice,.r-aspect,.r-chat,.r-empty,
+  .r-note,.r-advice,.r-advice-practice{
     -webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .r-block h2{break-after:avoid}
+  /* Практика, разорванная между страницами, — это брак: по такой распечатке
+     невозможно работать. Разрыв запрещаем карточкам, а не разделам. */
+  .r-practice,.r-aspect,.r-advice,.r-advice-practice,.r-note,.r-steps li{break-inside:avoid}
+  .r-deeper{break-inside:avoid;break-after:avoid}
+  /* Заголовок не остаётся один в конце страницы. */
+  .r-block h2,.r-block h3,.r-block h4{break-after:avoid}
+  /* А вот контейнер заметок рвать можно: их бывает двадцать. */
+  .r-notes{break-inside:auto}
   a{text-decoration:none;color:inherit}
 }

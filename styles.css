@@ -752,7 +752,10 @@ a{color:inherit;text-decoration:none}
 .rep-close{position:absolute;right:14px;top:10px;font-size:26px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer}
 .rep-close:hover{color:var(--ink)}
 .rep-title{font-size:20px;margin-bottom:6px}
-.rep-sub{font-size:14px;color:var(--muted);margin-bottom:16px}
+.rep-sub{font-size:14px;color:var(--muted);margin-bottom:6px}
+/* Чем отличается отчёт на его тарифе — единственная настоящая разница, поэтому
+   строка выделена цветом, а не спрятана в общий серый текст. */
+.rep-depth{font-size:13px;font-weight:600;color:var(--purple-d);margin-bottom:16px}
 .rep-periods{display:grid;gap:10px}
 .rep-period{position:relative;text-align:left;font:inherit;padding:14px 16px;border-radius:14px;cursor:pointer;background:#fff;border:1.5px solid var(--line);transition:.2s}
 .rep-period:hover{border-color:var(--purple);background:var(--bg-soft)}

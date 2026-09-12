@@ -10,44 +10,36 @@
    собрать. PDF даёт тот же результат для человека и не требует библиотек.
    DOCX — задача на этап с бэкендом.
 
-   Какие разделы попадают в отчёт, решает тариф: planAllows() — единственное
-   место, где живёт это решение. */
+   РАЗДЕЛЫ ОДИНАКОВЫЕ ДЛЯ ВСЕХ ТАРИФОВ. Тариф решает только глубину разбора
+   (depth.js). Порядок разделов ниже — это порядок чтения: что было → что в
+   этом заметно → что вы с этим делали → кто вы → о чём говорили → что дальше.
+   Ни один раздел не пропускается: пустой раздел объясняет, чем его наполнить,
+   и это полезнее его отсутствия. */
 import { escapeHtml } from '../util.js';
-import { getPlan, planAllows, PLAN_LABEL } from '../plan.js';
+import { getPlan, PLAN_LABEL } from '../plan.js';
+import { depthFor } from './depth.js';
 import { collectReport } from './data.js';
-import * as S from './sections.js';
+import { cover, inspiration, deeper, footer } from './section-frame.js';
+import { mood } from './section-mood.js';
+import { insights } from './section-insights.js';
+import { practices } from './section-practices.js';
+import { dar } from './section-dar.js';
+import { chats } from './section-chats.js';
+import { advice } from './section-advice.js';
 
-/* Что человек увидит, если поднимет тариф. Текст без данных пользователя. */
-const LOCKED_TEXT = {
-  insights: 'Связь сна, энергии и настроения — что именно влияет на ваше состояние',
-  dar: 'Ваш Дар и Поле силы: три грани характера и как возвращаться в ресурс',
-  chat: 'Короткие выводы из разговоров с ассистентом',
-  period: 'Отчёты за неделю и за месяц, а не только за день',
-  trend: 'Динамика по неделям: куда движется ваше состояние',
-  history: 'Вся история практик за всё время',
-};
-
-function bodyHtml(ctx, plan) {
-  const parts = [S.cover(ctx, PLAN_LABEL[plan])];
-  // Вдохновляющая строка нужна прежде всего короткому отчёту: на бесплатном
-  // тарифе он должен поддерживать, а не выглядеть урезанным.
-  if (!planAllows('report.insights', plan)) parts.push(S.inspiration(ctx));
-  parts.push(S.mood(ctx), S.practices(ctx));
-  if (planAllows('report.insights', plan)) parts.push(S.insights(ctx));
-  if (planAllows('report.dar', plan)) parts.push(S.dar(ctx, planAllows('report.darFull', plan)));
-  if (planAllows('report.chat', plan)) parts.push(S.chats(ctx));
-  if (planAllows('report.trends', plan)) parts.push(S.trend(ctx));
-  if (planAllows('report.practiceHistory', plan)) parts.push(S.practiceHistory(ctx));
-
-  const locked = [];
-  if (!planAllows('report.insights', plan)) locked.push(LOCKED_TEXT.insights);
-  if (!planAllows('report.dar', plan)) locked.push(LOCKED_TEXT.dar);
-  if (!planAllows('report.chat', plan)) locked.push(LOCKED_TEXT.chat);
-  if (!planAllows('report.period', plan)) locked.push(LOCKED_TEXT.period);
-  if (!planAllows('report.trends', plan)) locked.push(LOCKED_TEXT.trend);
-  if (!planAllows('report.practiceHistory', plan)) locked.push(LOCKED_TEXT.history);
-  parts.push(S.locked(locked), S.footer(ctx));
-  return parts.filter(Boolean).join('\n');
+function bodyHtml(ctx, plan, depth) {
+  return [
+    cover(ctx, PLAN_LABEL[plan], depth),
+    inspiration(ctx),
+    mood(ctx, depth),
+    insights(ctx, depth),
+    practices(ctx, depth),
+    dar(ctx, depth),
+    chats(ctx, depth),
+    advice(ctx, depth),
+    deeper(depth),
+    footer(ctx),
+  ].filter(Boolean).join('\n');
 }
 
 /* Имя вкладки = имя файла, которое браузер предложит при сохранении в PDF. */
@@ -60,6 +52,7 @@ function docTitle(ctx) {
 
 export function buildReportHtml(period = 'day', plan = getPlan()) {
   const ctx = collectReport(period);
+  const depth = depthFor(plan);
   // Стили резолвим от адреса приложения: у новой вкладки адрес about:blank,
   // относительная ссылка на report.css из неё может не найтись.
   const cssHref = new URL('report.css', location.href).href;
@@ -69,7 +62,7 @@ export function buildReportHtml(period = 'day', plan = getPlan()) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${docTitle(ctx)}</title>
-<link rel="stylesheet" href="${cssHref}">
+<link rel="stylesheet" href="${escapeHtml(cssHref)}">
 </head>
 <body>
 <div class="r-bar">
@@ -77,7 +70,7 @@ export function buildReportHtml(period = 'day', plan = getPlan()) {
   <span class="r-bar__hint">Выберите «Сохранить как PDF» — эта полоса не печатается.</span>
 </div>
 <main class="r-doc">
-${bodyHtml(ctx, plan)}
+${bodyHtml(ctx, plan, depth)}
 </main>
 </body>
 </html>`;

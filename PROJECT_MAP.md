@@ -41,8 +41,16 @@
 | `js/plan.js` | Тариф: `getPlan`, `setPlan`, `planAllows`, `nextPlan` |
 | `js/chat-journal.js` | Превращает реплики диалога в одно событие журнала |
 | `js/report/data.js` | `collectReport(period)` — сбор данных для отчёта |
-| `js/report/sections.js` | Вёрстка секций отчёта |
-| `js/report/document.js` | Сборка HTML-документа отчёта |
+| `js/report/depth.js` | Насколько подробно разбирать: `depthFor`, `deeperThan`, `BRIEF/NORMAL/FULL` |
+| `js/report/formatters.js` | Даты, числа и склонения — только для отчёта |
+| `js/report/section-frame.js` | Титул, вдохновляющая строка, приглашение к глубине, подвал |
+| `js/report/section-mood.js` | Раздел «Настроение» |
+| `js/report/section-insights.js` | Раздел «Что заметно в ваших данных» |
+| `js/report/section-practices.js` | Раздел «Практики, которые вы прошли» |
+| `js/report/section-dar.js` | Раздел «Ваш Дар и Поле силы» |
+| `js/report/section-chats.js` | Раздел «О чём вы говорили с ассистентом» |
+| `js/report/section-advice.js` | Раздел «Что делать дальше» |
+| `js/report/document.js` | Сборка HTML-документа: все разделы всегда, глубина — по тарифу |
 | `js/report/print.js` | Печать отчёта через скрытую рамку (минуя блокировщик всплывающих окон) |
 | `js/report/launcher.js` | Кнопка отчёта и выбор периода |
 | `docs/` | HTML-черновики юридических политик (152-ФЗ) |
@@ -54,9 +62,13 @@
 | `test/smoke.test.js` | Инициализация страницы, XSS, кризис-детекция |
 | `test/scope.test.js` | `scope.js`: разделение дневника и журнала между пользователями, перенос гостевых данных |
 | `test/journal-core.test.js` | `journal.js`: logEvent, loadEvents, битые данные, обрезка 400, границы периодов |
-| `test/plan.test.js` | `plan.js`: planAllows (эскалация прав), getPlan/setPlan, мутационная проверка |
+| `test/plan.test.js` | `plan.js`: planAllows (эскалация прав), getPlan/setPlan, «разделы отчёта тарифом не раздаются» |
 | `test/chat-journal.test.js` | `chat-journal.js`: флаг userSpoke, одно событие на диалог, лимит 6 строк |
 | `test/report-data.test.js` | `report/data.js`: пустые данные (нет NaN), weeklyTrend с выравниванием |
+| `test/report-depth.test.js` | `report/depth.js`: depthFor на мусорных тарифах, deeperThan на граничных значениях |
+| `test/report-sections.test.js` | Главное обещание: все 6 разделов присутствуют на depth 1/2/3; мутационная проверка |
+| `test/report-empty.test.js` | Пустые данные — нет NaN/undefined/null; практика без steps не роняет FULL |
+| `test/report-xss.test.js` | XSS по 6 векторам (эмоция, заметка, чат, практика, Дар, кавычки в атрибуте) |
 | `test/lead.test.js` | `lead.js`: телефон обязателен, проверка номера, номер попадает в письмо |
 | `test/sync.test.js` | `sync.js` + `api.js`: выключатель сервера, обрыв связи и очередь, чужая очередь, истёкший токен, первый и второй вход |
 | `test/helpers/boot.js` | Хелпер: `freshEnv()`, `bootDomModules()` — общая инициализация |
@@ -84,7 +96,7 @@
 |---|---|
 | Новая секция сайта (логика) | `js/<имя-секции>.js` + строка в `js/main.js` |
 | Логика, которой пользуются два и более модуля | отдельный модуль с именем-существительным, не в `util.js` |
-| Новый блок отчёта | функция в `js/report/sections.js`, данные для неё — в `js/report/data.js` |
+| Новый раздел отчёта | свой файл `js/report/section-<имя>.js` с функцией `(ctx, depth)` + строка в `bodyHtml` в `document.js`; данные — в `js/report/data.js` |
 | Стили отчёта | `report.css` (префикс `r-`), НЕ в `styles.css` |
 | Стили приложения | `styles.css`, класс с префиксом своей секции |
 | Юридический документ | `docs/` + отдельная галочка согласия в регистрации |

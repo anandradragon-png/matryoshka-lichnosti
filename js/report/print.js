@@ -13,6 +13,7 @@
 
    Своя таблица стилей отчёта (report.css) остаётся: у рамки отдельный
    документ, стили приложения в него не попадают. */
+import { planAllows } from '../plan.js';
 import { PERIODS } from './data.js';
 import { buildReportHtml } from './document.js';
 
@@ -36,6 +37,10 @@ function ensureFrame() {
 export function printReport(period = 'day') {
   return new Promise(resolve => {
     if (!PERIODS[period]) { resolve(false); return; }
+    // Заблокированная кнопка в модалке — это про интерфейс: её обходят одной
+    // строкой в консоли браузера. Решение о доступе принимает planAllows(),
+    // и принимать его нужно здесь, до сборки документа.
+    if (period !== 'day' && !planAllows('report.period')) { resolve(false); return; }
 
     let frame;
     try {
