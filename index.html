@@ -16,6 +16,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<!-- Стили теста чувств. Отдельным файлом: styles.css уже перешагнул предел
+     по размеру, переменные палитры берутся из него — он подключён раньше. -->
+<link rel="stylesheet" href="emotest.css" />
 </head>
 <body>
 
@@ -442,6 +445,12 @@
     </div>
     <div class="cards tests">
       <article class="card test-card">
+        <div class="test-icon">💧</div>
+        <h3>Как вы обращаетесь с чувствами</h3>
+        <p>Сорок утверждений о четырёх шагах: заметить и назвать, услышать телом, разрешить себе, довести до конца. Это не «кто вы» — это про то, как вы обходитесь с собой сейчас, и через месяц результат может оказаться другим.</p>
+        <button class="btn btn-primary" type="button" id="emotestStart">Пройти тест</button>
+      </article>
+      <article class="card test-card">
         <div class="test-icon">🧭</div>
         <h3>Типология по четырём шкалам Юнга</h3>
         <p>Определите свой психологический тип по 4 шкалам Юнга — как вы получаете энергию, воспринимаете информацию, принимаете решения и организуете жизнь.</p>
@@ -460,6 +469,8 @@
         <a href="#map" class="btn btn-outline" data-nav>Рассчитать мой Дар</a>
       </article>
     </div>
+    <!-- Сюда js/emotest.js рисует вступление, вопросы и результат -->
+    <div class="et-box" id="emotestBox" hidden></div>
   </div>
 </section>
 

@@ -12,6 +12,7 @@ import './sync.js';
 import './journal.js';
 import './plan.js';
 import './practices.js';
+import './emotest.js';
 import './organizer.js';
 import './chat.js';
 import './map.js';

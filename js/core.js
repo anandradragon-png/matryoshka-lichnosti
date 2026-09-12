@@ -13,6 +13,7 @@ export const ML_KEYS = {
   cookie: 'ml_cookie_consent',
   companies: 'ml_companies',
   journal: 'ml_journal',
+  emotest: 'ml_emotest',
   plan: 'ml_plan',
   token: 'ml_token',
   synced: 'ml_synced',
