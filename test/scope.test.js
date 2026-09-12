@@ -39,6 +39,25 @@ describe('scope: чьи это данные', () => {
     expect(localStorage.getItem('ml_diary__anna')).toBe(null);
   });
 
+  // Ответы теста чувств — такая же специальная категория, как эмоции дневника.
+  // Человек начал тест без входа, потом зарегистрировался — сорок ответов
+  // обязаны уехать к нему, а не остаться общими для всех за этим компьютером.
+  test('ответы теста чувств переезжают к вошедшему и второму не видны', async () => {
+    const { scopedKey } = await import('../js/scope.js');
+    const { ML_KEYS } = await import('../js/core.js');
+    const guest = JSON.stringify({ answers: [3, 2, 1], done: false, date: 1000 });
+    localStorage.setItem(ML_KEYS.emotest, guest);
+
+    localStorage.setItem('ml_session', 'sveta');
+    expect(scopedKey(ML_KEYS.emotest)).toBe('ml_emotest__sveta');
+    expect(localStorage.getItem('ml_emotest__sveta')).toBe(guest);
+    expect(localStorage.getItem(ML_KEYS.emotest)).toBe(null);
+
+    localStorage.setItem('ml_session', 'anna');
+    expect(scopedKey(ML_KEYS.emotest)).toBe('ml_emotest__anna');
+    expect(localStorage.getItem('ml_emotest__anna')).toBe(null);
+  });
+
   test('дневник и журнал разделяются между пользователями целиком', async () => {
     await import('../js/core.js');
     await import('../js/practices.js');
