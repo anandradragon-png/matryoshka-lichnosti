@@ -7,6 +7,8 @@
    модуля в index.html, поэтому map.js его уже видит. */
 import './core.js';
 import './util.js';
+import './api.js';
+import './sync.js';
 import './journal.js';
 import './plan.js';
 import './practices.js';

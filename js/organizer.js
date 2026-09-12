@@ -1,6 +1,7 @@
 import { ML_KEYS } from './core.js';
 import { escapeHtml, safeParse, dayKey } from './util.js';
 import { scopedKey } from './scope.js';
+import { pushEntry } from './sync.js';
 
 /* ================= ОРГАНАЙЗЕР ЭМОЦИЙ ================= */
 /* Колесо эмоций Роберта Плутчика: 8 спектров, в каждом 3 эмоции по возрастанию
@@ -169,7 +170,10 @@ document.getElementById('saveEntry').addEventListener('click', () => {
     alert('Сегодня уже сохранено 3 отметки настроения — это максимум за день. Вернитесь к отметке завтра.');
     return;
   }
-  entries.push({
+  const entry = {
+    // Номер записи выдаёт браузер: по нему сервер понимает, что это та же
+    // запись, а не новая, — иначе повторная отправка создала бы копию.
+    id: 'en_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     emotions: selectedEmotions.map(e => ({ name: e.name, color: e.color, spectrum: e.spectrum })),
     compound: compoundEmotion(selectedEmotions),   // единая составная эмоция (диада) или null
     emotion: selectedEmotions[0].name,   // для совместимости со старым форматом
@@ -179,8 +183,10 @@ document.getElementById('saveEntry').addEventListener('click', () => {
     energy: +energy.value,
     note: document.getElementById('diaryNote').value.trim(),
     date: Date.now()
-  });
+  };
+  entries.push(entry);
   saveEntries(entries);
+  pushEntry(entry);            // досылка на сервер, если он подключён
   document.getElementById('diaryNote').value = '';
   document.querySelectorAll('.emotion').forEach(x => x.classList.remove('sel'));
   selectedEmotions = [];

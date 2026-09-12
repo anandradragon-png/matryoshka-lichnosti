@@ -14,6 +14,9 @@ export const ML_KEYS = {
   companies: 'ml_companies',
   journal: 'ml_journal',
   plan: 'ml_plan',
+  token: 'ml_token',
+  synced: 'ml_synced',
+  pending: 'ml_pending',
 };
 
 /* ---------- Мобильное меню + активная навигация ---------- */

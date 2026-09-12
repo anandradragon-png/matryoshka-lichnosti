@@ -15,6 +15,7 @@
 import { ML_KEYS } from './core.js';
 import { safeParse, dayKey } from './util.js';
 import { scopedKey } from './scope.js';
+import { pushEvent } from './sync.js';
 
 /* Типы событий. Строки хранятся в localStorage, поэтому не переименовывать
    без переноса старых данных. */
@@ -58,6 +59,7 @@ export function logEvent(type, data = {}) {
   const event = { id: newId(), type, date: Date.now(), data };
   list.push(event);
   write(list.slice(-MAX_EVENTS));
+  pushEvent(event);            // досылка на сервер, если он подключён
   document.dispatchEvent(new CustomEvent('ml:journal', { detail: event }));
   return event;
 }
@@ -72,6 +74,7 @@ export function updateEvent(id, data = {}) {
   event.data = { ...event.data, ...data };
   event.updated = Date.now();
   write(list.slice(-MAX_EVENTS));
+  pushEvent(event);
   return event;
 }
 

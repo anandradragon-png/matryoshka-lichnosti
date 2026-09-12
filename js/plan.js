@@ -10,6 +10,7 @@
    принимается решение о доступе, — planAllows(): менять придётся одну функцию. */
 import { ML_KEYS } from './core.js';
 import { safeParse } from './util.js';
+import { apiOn, apiCall } from './api.js';
 
 export const PLAN_ORDER = ['free', 'standard', 'premium'];
 export const PLAN_LABEL = { free: 'Базовая', standard: 'Стандартная', premium: 'Премиум' };
@@ -45,6 +46,10 @@ export function setPlan(plan, login = currentLogin()) {
   const all = loadPlans();
   all[login] = plan;
   localStorage.setItem(ML_KEYS.plan, JSON.stringify(all));
+  // Тариф — это про деньги, поэтому при подключённом сервере он хранится там,
+  // а в браузере остаётся копия для отрисовки. Не доехало — не беда: при
+  // следующем входе тариф придёт с сервера и перезапишет местную копию.
+  if (apiOn() && login === currentLogin()) apiCall('plan.set', { plan }).catch(() => {});
   document.dispatchEvent(new CustomEvent('ml:plan-change', { detail: { login, plan } }));
 }
 
