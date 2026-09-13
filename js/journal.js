@@ -13,7 +13,7 @@
 
    Эмоции здесь НЕ дублируются: их источник остаётся один — ml_diary. */
 import { ML_KEYS } from './core.js';
-import { safeParse, dayKey } from './util.js';
+import { safeParse, safeSet, dayKey } from './util.js';
 import { scopedKey } from './scope.js';
 import { pushEvent } from './sync.js';
 
@@ -34,7 +34,7 @@ const MAX_EVENTS = 400;
 // Ключ зависит от вошедшего пользователя — журнал одного не виден другому.
 const key = () => scopedKey(ML_KEYS.journal);
 const readRaw = () => safeParse(localStorage.getItem(key()), []);
-const write = list => localStorage.setItem(key(), JSON.stringify(list));
+const write = list => safeSet(key(), JSON.stringify(list));
 
 /* Запись могла быть испорчена руками или обрывом записи — это граница системы,
    доверять её форме нельзя. Всё, что не похоже на событие, отбрасываем. */

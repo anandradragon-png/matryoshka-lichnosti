@@ -11,7 +11,7 @@
    ОТВЕТЫ СОХРАНЯЮТСЯ НА КАЖДОМ КЛИКЕ. Сорок вопросов — это долго; закрыл
    вкладку или обновил страницу — вернулся туда же, а не начал заново. */
 import { ML_KEYS } from './core.js';
-import { safeParse } from './util.js';
+import { safeParse, safeSet } from './util.js';
 import { scopedKey } from './scope.js';
 import { SCALES, QUESTIONS, ANSWERS } from './emotest-data.js';
 import { scoreTest, emptyAnswers, unanswered } from './emotest-score.js';
@@ -56,7 +56,7 @@ function load() {
 }
 
 function save(done) {
-  localStorage.setItem(key(), JSON.stringify({ answers, done, date: Date.now() }));
+  safeSet(key(), JSON.stringify({ answers, done, date: Date.now() }));
 }
 
 const pageSlice = () => ORDER.slice(page * PER_PAGE, (page + 1) * PER_PAGE);

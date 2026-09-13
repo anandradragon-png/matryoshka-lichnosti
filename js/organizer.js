@@ -1,5 +1,5 @@
 import { ML_KEYS } from './core.js';
-import { escapeHtml, safeParse, dayKey } from './util.js';
+import { escapeHtml, safeParse, safeSet, dayKey } from './util.js';
 import { scopedKey } from './scope.js';
 import { pushEntry } from './sync.js';
 
@@ -140,7 +140,7 @@ energy.addEventListener('input', () => energyVal.textContent = energy.value);
 // Ключ считается каждый раз: он зависит от того, кто вошёл (js/scope.js).
 const storeKey = () => scopedKey(ML_KEYS.diary);
 export const loadEntries = () => safeParse(localStorage.getItem(storeKey()), []);
-const saveEntries = e => localStorage.setItem(storeKey(), JSON.stringify(e));
+const saveEntries = e => safeSet(storeKey(), JSON.stringify(e));
 // Список эмоций записи (совместимость: старый формат — одна эмоция, новый — массив)
 const entryEmotions = e => (Array.isArray(e.emotions) && e.emotions.length)
   ? e.emotions
@@ -185,7 +185,12 @@ document.getElementById('saveEntry').addEventListener('click', () => {
     date: Date.now()
   };
   entries.push(entry);
-  saveEntries(entries);
+  if (!saveEntries(entries)) {
+    // Хранилище переполнено: запись не легла. Форму не очищаем —
+    // текст человека не должен пропасть молча.
+    alert('Не получилось сохранить запись: хранилище браузера переполнено. Удалите несколько старых записей и попробуйте снова.');
+    return;
+  }
   pushEntry(entry);            // досылка на сервер, если он подключён
   document.getElementById('diaryNote').value = '';
   document.querySelectorAll('.emotion').forEach(x => x.classList.remove('sel'));
