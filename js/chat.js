@@ -126,6 +126,16 @@ const flow = {
     const rec = PRACTICES.find(p => p.cat === g.rec);
     setChatTopic(state, rec ? rec.title : '');   // тема диалога для отчёта
     await botSay(g.text);
+    // В каталоге может не оказаться практики нужного направления (каталог
+    // правится отдельно от гида эмоций) — без проверки rec.title роняет чат.
+    if (!rec) {
+      await botSay(`Загляните в раздел практик направления «${g.rec}» — выберите ту, что откликнется.`);
+      setQuick([
+        { label: 'Показать практики', action: () => { scrollToPractices(g.rec); flow.after(); } },
+        { label: 'Записать в дневник', action: () => { const t = document.getElementById('organizer'); if (t) t.scrollIntoView({ behavior: 'smooth' }); flow.after(); } },
+      ]);
+      return;
+    }
     await botSay(`Рекомендую практику «<b>${rec.title}</b>» из направления «${g.rec}» — это ${rec.time}. Хотите попробовать?`);
     setQuick([
       { label: 'Показать практику', action: () => { openPractice(rec); flow.after(); } },
